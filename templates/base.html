@@ -1,0 +1,60 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LR Desk{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <div class="rail-brand">
+      <div class="mark">LR&nbsp;DESK</div>
+      <div class="sub">Dispatch &amp; staff records</div>
+    </div>
+    <nav>
+      <a href="{% url 'dashboard' %}" class="{% if active == 'dashboard' %}active{% endif %}">Dashboard</a>
+      <div class="group">Attendance</div>
+      <a href="{% url 'mark_attendance' %}" class="{% if active == 'mark' %}active{% endif %}">Mark today</a>
+      <a href="{% url 'day_register' %}" class="{% if active == 'register' %}active{% endif %}">Day register</a>
+      <a href="{% url 'employee_list' %}" class="{% if active == 'employees' %}active{% endif %}">Employees</a>
+      <a href="{% url 'monthly_attendance' %}" class="{% if active == 'monthly' %}active{% endif %}">Monthly report</a>
+      <div class="group">LR</div>
+      <a href="{% url 'inquiry_dashboard' %}" class="{% if active == 'inquiry' %}active{% endif %}">Inquiry board</a>
+      <a href="{% url 'contact_book' %}" class="{% if active == 'contacts' %}active{% endif %}">Saved contacts</a>
+      <a href="{% url 'report_builder' %}" class="{% if active == 'builder' %}active{% endif %}">Report builder</a>
+    </nav>
+    <div class="rail-foot">
+      <div class="who">{{ request.user.get_full_name|default:request.user.username }}</div>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+        <button type="submit">Sign out</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <h1>{% block heading %}{% endblock %}</h1>
+        {% block subheading %}{% endblock %}
+      </div>
+      <div class="stamp">{% block stamp %}{% now "D, d M Y" %}{% endblock %}</div>
+    </header>
+
+    <div class="content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="notice {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

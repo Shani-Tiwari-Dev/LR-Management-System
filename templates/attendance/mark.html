@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Mark attendance · LR Desk{% endblock %}
+{% block heading %}Attendance sheet{% endblock %}
+{% block subheading %}<p style="margin:2px 0 0;color:var(--muted)">Mark present. Anything other than present needs a reason.</p>{% endblock %}
+{% block stamp %}{{ day|date:"D, d M Y" }}{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-head">
+    <form method="get" class="toolbar">
+      <div class="field">
+        <label for="date">Sheet date</label>
+        <input type="date" id="date" name="date" value="{{ day|date:'Y-m-d' }}">
+      </div>
+      <button class="btn secondary" type="submit">Open sheet</button>
+    </form>
+    {% if already_marked %}<span class="pill p">Saved for this day</span>{% endif %}
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <input type="hidden" name="day" value="{{ day|date:'Y-m-d' }}">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:110px">Code</th><th>Employee</th><th>Status</th><th>Reason for absence</th></tr>
+        </thead>
+        <tbody>
+        {% for employee, form in rows %}
+          <tr class="sheet-row">
+            <td class="mono">{{ employee.code }}</td>
+            <td>{{ employee.name }}{% if employee.designation %}<div style="color:var(--muted);font-size:.84rem">{{ employee.designation }}</div>{% endif %}</td>
+            <td>
+              {{ form.employee_id }}
+              <div class="status-set">
+                {% for radio in form.status %}
+                  <input type="radio" name="{{ radio.data.name }}" value="{{ radio.data.value }}"
+                         id="{{ radio.id_for_label }}" {% if radio.data.selected %}checked{% endif %}
+                         data-row="{{ forloop.parentloop.counter0 }}">
+                  <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                {% endfor %}
+              </div>
+            </td>
+            <td class="reason-cell" data-reason-for="{{ forloop.counter0 }}">
+              {{ form.reason }}
+              {% if form.reason.errors %}<div class="errors">{{ form.reason.errors.0 }}</div>{% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="empty">No active employees yet. <a href="{% url 'employee_add' %}">Add an employee</a> to start marking attendance.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if rows %}
+    <div class="panel-body">
+      <div class="actions">
+        <button class="btn" type="submit">Save attendance</button>
+        <a class="btn secondary" href="{% url 'day_register' %}?date={{ day|date:'Y-m-d' }}">View day register</a>
+      </div>
+    </div>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // A reason box only appears when the person is not marked present.
+  var needsReason = "{{ reason_statuses }}".split("");
+  function sync(row) {
+    var checked = document.querySelector('input[type=radio][data-row="' + row + '"]:checked');
+    var cell = document.querySelector('[data-reason-for="' + row + '"]');
+    if (!cell) return;
+    var show = checked && needsReason.indexOf(checked.value) !== -1;
+    cell.classList.toggle('hidden', !show);
+    var input = cell.querySelector('input');
+    if (input) {
+      input.required = !!show;
+      input.placeholder = show ? 'Why were they away?' : '';
+      if (!show) input.value = '';
+    }
+  }
+  document.querySelectorAll('input[type=radio][data-row]').forEach(function (radio) {
+    radio.addEventListener('change', function () { sync(radio.dataset.row); });
+  });
+  document.querySelectorAll('[data-reason-for]').forEach(function (cell) {
+    sync(cell.dataset.reasonFor);
+  });
+</script>
+{% endblock %}

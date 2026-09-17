@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load dict_extras %}
+{% block title %}Report builder · LR Desk{% endblock %}
+{% block heading %}Report builder{% endblock %}
+{% block subheading %}<p style="margin:2px 0 0;color:var(--muted)">Upload the raw billing file. You get back only the bills whose LR number is still marked OK.</p>{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-head">
+    <div>
+      <h2>Upload a raw file</h2>
+      <p>Junk rows go, text is split into columns, and only these columns are kept:
+         {{ columns|join:" / " }}.</p>
+    </div>
+  </div>
+  <div class="panel-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="field">
+        <label for="{{ form.excel_file.id_for_label }}">{{ form.excel_file.label }}</label>
+        {{ form.excel_file }}
+        <div class="help">{{ form.excel_file.help_text }}</div>
+        {% if form.excel_file.errors %}<div class="errors">{{ form.excel_file.errors.0 }}</div>{% endif %}
+      </div>
+      <div class="check">{{ form.include_blank_lr }}<label for="{{ form.include_blank_lr.id_for_label }}">{{ form.include_blank_lr.label }}</label></div>
+      <div class="check">{{ form.merge_series }}<label for="{{ form.merge_series.id_for_label }}">{{ form.merge_series.label }}</label></div>
+      <div class="actions"><button class="btn" type="submit">Process file</button></div>
+    </form>
+  </div>
+</div>
+
+{% if processed %}
+  <div class="tiles">
+    <div class="tile"><div class="figure">{{ report.rows_in }}</div><div class="caption">Rows read</div></div>
+    <div class="tile"><div class="figure">{{ report.blank_rows_removed }}</div><div class="caption">Blank rows removed</div></div>
+    <div class="tile"><div class="figure">{{ report.junk_rows_removed }}</div><div class="caption">Junk rows removed</div></div>
+    <div class="tile"><div class="figure">{{ report.rows_with_lr }}</div><div class="caption">Rows dropped — LR already received</div></div>
+    <div class="tile good"><div class="figure">{{ total_rows }}</div><div class="caption">Rows kept — LR still OK</div></div>
+  </div>
+
+  {% if report.columns_missing %}
+    <div class="notice info">
+      These columns were not found in the file and come out blank:
+      {{ report.columns_missing|join:", " }}. Rename the headings in the source file to match.
+    </div>
+  {% endif %}
+  {% if report.split_note %}
+    <div class="notice info">The rows arrived in one column, so they were split on {{ report.split_note }}.</div>
+  {% endif %}
+
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2>Cleaned result</h2>
+        <p>{% if truncated %}Showing the first {{ data|length }} of {{ total_rows }} rows. The download holds all of them.{% else %}All {{ total_rows }} rows shown.{% endif %}</p>
+      </div>
+      {% if total_rows %}
+      <form method="post" action="{% url 'download_result' %}">
+        {% csrf_token %}
+        <input type="hidden" name="payload" value="{{ payload }}">
+        <button class="btn" type="submit">Download cleaned Excel</button>
+      </form>
+      {% endif %}
+    </div>
+    <div class="panel-body tight">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>{% for column in columns %}<th>{{ column }}</th>{% endfor %}</tr></thead>
+          <tbody>
+          {% for record in data %}
+            <tr>
+              <td>{{ record|get:"Transport Name" }}</td>
+              <td>{{ record|get:"Party Name" }}</td>
+              <td class="mono">{{ record|get:"Bill No" }}</td>
+              <td class="mono">{{ record|get:"LR No" }}</td>
+              <td class="mono">{{ record|get:"LR Date" }}</td>
+              <td class="mono">{{ record|get:"Cases" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="empty">No rows were left after processing.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><div><h2>Sheets in the file</h2></div></div>
+    <div class="panel-body tight">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Sheet</th><th>Used</th><th>Header row</th><th>Rows kept</th></tr></thead>
+          <tbody>
+          {% for sheet in report.sheets %}
+            <tr>
+              <td>{{ sheet.name }}</td>
+              <td>{% if sheet.used %}<span class="pill p">Yes</span>{% else %}<span class="pill w">Skipped — {{ sheet.reason }}</span>{% endif %}</td>
+              <td class="mono">{{ sheet.header_row|default:"—" }}</td>
+              <td class="mono">{{ sheet.kept|default:"0" }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

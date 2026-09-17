@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{% if employee %}Edit employee{% else %}Add employee{% endif %} · LR Desk{% endblock %}
+{% block heading %}{% if employee %}Edit {{ employee.name }}{% else %}Add an employee{% endif %}{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width:720px">
+  <div class="panel-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-grid">
+        {% for field in form %}
+          {% if field.name == "is_active" %}
+            <div class="check wide">{{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+          {% else %}
+            <div class="field">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="errors">{{ field.errors.0 }}</div>{% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="actions">
+        <button class="btn" type="submit">Save employee</button>
+        <a class="btn secondary" href="{% url 'employee_list' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Saved contacts · LR Desk{% endblock %}
+{% block heading %}Saved contacts{% endblock %}
+{% block subheading %}<p style="margin:2px 0 0;color:var(--muted)">Every contact typed on an inquiry is kept here and offered as a choice next time.</p>{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-body tight">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Number</th><th>Usual party</th><th>Usual transport</th><th>Times used</th><th></th></tr></thead>
+        <tbody>
+        {% for contact in contacts %}
+          <tr>
+            <td>{{ contact.name }}</td>
+            <td class="mono">{{ contact.phone }}</td>
+            <td>{{ contact.party_name|default:"—" }}</td>
+            <td>{{ contact.transport_name|default:"—" }}</td>
+            <td class="mono">{{ contact.times_used }}</td>
+            <td><a class="btn wa small" target="_blank" rel="noopener"
+                   href="https://wa.me/{{ contact.whatsapp_number }}">WhatsApp</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="empty">No contacts saved yet. They appear here after the first inquiry is logged.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

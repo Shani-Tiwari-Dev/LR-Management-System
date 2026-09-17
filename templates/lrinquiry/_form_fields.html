@@ -1,0 +1,61 @@
+<div class="form-grid">
+  <div class="field">
+    <label for="{{ form.inquiry_date.id_for_label }}">Inquiry date</label>
+    {{ form.inquiry_date }}
+    {% if form.inquiry_date.errors %}<div class="errors">{{ form.inquiry_date.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
+    <label for="{{ form.party_name.id_for_label }}">Party name</label>
+    {{ form.party_name }}
+    {% if form.party_name.errors %}<div class="errors">{{ form.party_name.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
+    <label for="{{ form.transport_name.id_for_label }}">Transport name</label>
+    {{ form.transport_name }}
+    {% if form.transport_name.errors %}<div class="errors">{{ form.transport_name.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
+    <label for="{{ form.bill_series.id_for_label }}">Bill series</label>
+    {{ form.bill_series }}
+    {% if form.bill_series.errors %}<div class="errors">{{ form.bill_series.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
+    <label for="{{ form.bill_no.id_for_label }}">Bill no</label>
+    {{ form.bill_no }}
+    {% if form.bill_no.errors %}<div class="errors">{{ form.bill_no.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
+    <label for="{{ form.contact_name.id_for_label }}">Contact person name</label>
+    {{ form.contact_name }}
+    <div class="help">Saved contacts appear as you type. Picking one fills the number.</div>
+    {% if form.contact_name.errors %}<div class="errors">{{ form.contact_name.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
+    <label for="{{ form.contact_phone.id_for_label }}">Contact number</label>
+    {{ form.contact_phone }}
+    {% if form.contact_phone.errors %}<div class="errors">{{ form.contact_phone.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
+    <label for="{{ form.lr_no.id_for_label }}">LR no</label>
+    {{ form.lr_no }}
+    {% if form.lr_no.errors %}<div class="errors">{{ form.lr_no.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
+    <label for="{{ form.status.id_for_label }}">Status</label>
+    {{ form.status }}
+  </div>
+  <div class="field wide">
+    <label for="{{ form.remarks.id_for_label }}">Remarks</label>
+    {{ form.remarks }}
+  </div>
+</div>
+
+<datalist id="contact-names">
+  {% for name in contact_names %}<option value="{{ name }}"></option>{% endfor %}
+</datalist>
+<datalist id="party-names">
+  {% for name in party_names %}<option value="{{ name }}"></option>{% endfor %}
+</datalist>
+<datalist id="transport-names">
+  {% for name in transport_names %}<option value="{{ name }}"></option>{% endfor %}
+</datalist>

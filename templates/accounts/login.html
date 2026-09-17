@@ -1,0 +1,54 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · LR Desk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-aside">
+    <div class="docket">
+      <div>consignment desk <b>/ open</b></div>
+      <div>lr numbers pending <b>/ tracked daily</b></div>
+      <div>staff register <b>/ marked daily</b></div>
+    </div>
+    <div>
+      <h1>The desk where LRs stop going missing.</h1>
+      <p>Log the day's inquiries, message the transport contact on WhatsApp,
+         and keep the staff register in one place.</p>
+    </div>
+    <div class="docket">lr desk · {% now "Y" %}</div>
+  </div>
+
+  <div class="login-form-side">
+    <div class="login-card">
+      <h2>Sign in</h2>
+      <p class="lede">Use the account your administrator created for you.</p>
+
+      {% if form.errors %}
+        <div class="notice error">That username and password do not match. Try again.</div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="field">
+          <label for="id_username">Username</label>
+          <input type="text" name="username" id="id_username" autofocus autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="id_password">Password</label>
+          <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+        </div>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button class="btn" type="submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

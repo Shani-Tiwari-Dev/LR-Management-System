@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}LR inquiry board · LR Desk{% endblock %}
+{% block heading %}LR inquiry board{% endblock %}
+{% block stamp %}{{ day|date:"D, d M Y" }}{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-head">
+    <div class="daynav">
+      <a class="btn secondary small" href="?date={{ prev_day|date:'Y-m-d' }}">Previous day</a>
+      <span class="day">{{ day|date:"d M Y" }}</span>
+      <a class="btn secondary small" href="?date={{ next_day|date:'Y-m-d' }}">Next day</a>
+    </div>
+    <form method="get" class="toolbar">
+      <div class="field">
+        <label for="q">Search every day</label>
+        <input type="text" id="q" name="q" value="{{ query }}" placeholder="Party, transport, bill or LR no">
+      </div>
+      <button class="btn secondary" type="submit">Search</button>
+      {% if query %}<a class="btn secondary" href="{% url 'inquiry_dashboard' %}">Clear</a>{% endif %}
+    </form>
+  </div>
+</div>
+
+<div class="panel">
+  <details class="adder" {% if open_form or form.errors %}open{% endif %}>
+    <summary>Add an inquiry</summary>
+    <div class="panel-body">
+      <form method="post" action="{% url 'add_inquiry' %}">
+        {% csrf_token %}
+        {% include "lrinquiry/_form_fields.html" %}
+        <div class="actions">
+          <button class="btn" type="submit">Save inquiry</button>
+        </div>
+      </form>
+    </div>
+  </details>
+</div>
+
+<div class="panel">
+  <div class="panel-head">
+    <div><h2>{{ heading }}</h2><p>{{ inquiries|length }} entr{{ inquiries|length|pluralize:"y,ies" }} listed.</p></div>
+  </div>
+  <div class="panel-body tight">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Party name</th><th>Transport name</th><th>Bill</th>
+            <th>LR no</th><th>Contact person</th><th>Number</th><th>Status</th><th>Reach out</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for inquiry in inquiries %}
+          <tr>
+            <td class="mono">{{ inquiry.inquiry_date|date:"d-m-Y" }}</td>
+            <td>{{ inquiry.party_name }}</td>
+            <td>{{ inquiry.transport_name }}</td>
+            <td class="mono">{{ inquiry.bill_reference }}</td>
+            <td class="mono">{% if inquiry.lr_no %}{{ inquiry.lr_no }}{% else %}<span style="color:var(--amber)">pending</span>{% endif %}</td>
+            <td>{{ inquiry.contact.name }}</td>
+            <td class="mono">{{ inquiry.contact.phone }}</td>
+            <td><span class="pill {{ inquiry.status|lower }}">{{ inquiry.get_status_display }}</span></td>
+            <td>
+              <a class="btn wa small" target="_blank" rel="noopener" href="{{ inquiry.whatsapp_url }}">
+                WhatsApp {{ inquiry.contact.phone }}
+              </a>
+            </td>
+            <td><a class="btn secondary small" href="{% url 'edit_inquiry' inquiry.pk %}">Edit</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="10" class="empty">Nothing logged for this day yet. Open “Add an inquiry” above to make the first entry.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var contacts = {{ contacts_json|safe }};
+  var nameField = document.getElementById('{{ form.contact_name.id_for_label }}');
+  var phoneField = document.getElementById('{{ form.contact_phone.id_for_label }}');
+  var partyField = document.getElementById('{{ form.party_name.id_for_label }}');
+  var transportField = document.getElementById('{{ form.transport_name.id_for_label }}');
+
+  function fillFromContact() {
+    if (!nameField || !phoneField) return;
+    var typed = nameField.value.trim().toLowerCase();
+    var match = contacts.find(function (c) { return c.name.toLowerCase() === typed; });
+    if (!match) return;
+    phoneField.value = match.phone;
+    if (partyField && !partyField.value && match.party) partyField.value = match.party;
+    if (transportField && !transportField.value && match.transport) transportField.value = match.transport;
+  }
+  if (nameField) {
+    nameField.addEventListener('change', fillFromContact);
+    nameField.addEventListener('input', fillFromContact);
+  }
+</script>
+{% endblock %}
