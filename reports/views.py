@@ -92,11 +92,11 @@ def monthly_attendance_xlsx(request):
     sheet = wb.active
     sheet.title = f"{calendar.month_abbr[month]} {year}"
 
-    header_fill = PatternFill("solid", fgColor="15202B")
+    header_fill = PatternFill("solid", fgColor="14532D")
     header_font = Font(color="FFFFFF", bold=True)
 
-    header = ["Code", "Employee", "Department"] + [str(d) for d in days] + [
-        "Present", "Absent", "Half day", "Leave", "Week off", "Payable days"
+    header = ["Code", "Party", "Route / area"] + [str(d) for d in days] + [
+        "Received", "Not received", "Partial", "Pending", "Not expected", "Received total"
     ]
     sheet.append(header)
     for cell in sheet[1]:
@@ -119,9 +119,9 @@ def monthly_attendance_xlsx(request):
     sheet.column_dimensions["B"].width = 26
     sheet.column_dimensions["C"].width = 18
 
-    # Second sheet: every absence with the reason that was recorded.
-    reason_sheet = wb.create_sheet("Absence reasons")
-    reason_sheet.append(["Date", "Code", "Employee", "Status", "Reason"])
+    # Second sheet: every non-receipt with the remark that was recorded.
+    reason_sheet = wb.create_sheet("LR remarks")
+    reason_sheet.append(["Date", "Code", "Party", "Status", "Remark"])
     for cell in reason_sheet[1]:
         cell.fill = header_fill
         cell.font = header_font
@@ -146,7 +146,7 @@ def monthly_attendance_xlsx(request):
     stream = BytesIO()
     wb.save(stream)
     stream.seek(0)
-    filename = f"attendance-{year}-{month:02d}.xlsx"
+    filename = f"lr-coming-{year}-{month:02d}.xlsx"
     response = HttpResponse(
         stream.read(),
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

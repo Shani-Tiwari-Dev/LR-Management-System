@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Monthly attendance · LR Desk{% endblock %}
-{% block heading %}Attendance for {{ month_name }} {{ year }}{% endblock %}
-{% block stamp %}P present · A absent · H half day · L leave · W week off{% endblock %}
+{% block title %}Monthly LR coming · LR Desk{% endblock %}
+{% block heading %}LR coming for {{ month_name }} {{ year }}{% endblock %}
+{% block stamp %}P received · A not received · H partial · L pending · W not expected{% endblock %}
 
 {% block content %}
 <div class="panel no-print">
@@ -33,8 +33,8 @@
 </div>
 
 <div class="tiles">
-  <div class="tile good"><div class="figure">{{ total_present }}</div><div class="caption">Present days in the month</div></div>
-  <div class="tile bad"><div class="figure">{{ total_absent }}</div><div class="caption">Absent days in the month</div></div>
+  <div class="tile good"><div class="figure">{{ total_present }}</div><div class="caption">LR received days in the month</div></div>
+  <div class="tile bad"><div class="figure">{{ total_absent }}</div><div class="caption">LR not received days in the month</div></div>
 </div>
 
 <div class="panel">
@@ -43,9 +43,9 @@
       <table class="grid-report">
         <thead>
           <tr>
-            <th style="text-align:left">Employee</th>
+            <th style="text-align:left">Party</th>
             {% for day in days %}<th>{{ day }}</th>{% endfor %}
-            <th>P</th><th>A</th><th>H</th><th>L</th><th>W</th><th>Payable</th>
+            <th>P</th><th>A</th><th>H</th><th>L</th><th>W</th><th>Received total</th>
           </tr>
         </thead>
         <tbody>
@@ -63,7 +63,7 @@
             <td class="mono"><b>{{ row.payable }}</b></td>
           </tr>
         {% empty %}
-          <tr><td class="empty" colspan="40">No employees on roll yet.</td></tr>
+          <tr><td class="empty" colspan="40">No parties tracked yet.</td></tr>
         {% endfor %}
         </tbody>
       </table>
@@ -72,11 +72,11 @@
 </div>
 
 <div class="panel">
-  <div class="panel-head"><div><h2>Reasons recorded this month</h2><p>Every day someone was not present.</p></div></div>
+  <div class="panel-head"><div><h2>Remarks recorded this month</h2><p>Every day an LR wasn't received.</p></div></div>
   <div class="panel-body tight">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Employee</th><th>Days and reasons</th></tr></thead>
+        <thead><tr><th>Party</th><th>Days and remarks</th></tr></thead>
         <tbody>
         {% for row in rows %}
           {% if row.reasons %}

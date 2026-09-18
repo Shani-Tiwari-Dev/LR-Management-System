@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Employees · LR Desk{% endblock %}
-{% block heading %}Employees{% endblock %}
+{% block title %}Parties · LR Desk{% endblock %}
+{% block heading %}Parties{% endblock %}
 
 {% block content %}
 <div class="panel">
@@ -10,12 +10,12 @@
       <input type="text" id="q" name="q" value="{{ query }}" placeholder="Type a name"></div>
       <button class="btn secondary" type="submit">Search</button>
     </form>
-    <a class="btn" href="{% url 'employee_add' %}">Add employee</a>
+    <a class="btn" href="{% url 'employee_add' %}">Add party</a>
   </div>
   <div class="panel-body tight">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Code</th><th>Name</th><th>Designation</th><th>Department</th><th>Phone</th><th>Status</th><th></th></tr></thead>
+        <thead><tr><th>Code</th><th>Name</th><th>Transport name</th><th>Route / area</th><th>Phone</th><th>Status</th><th></th></tr></thead>
         <tbody>
         {% for employee in employees %}
           <tr>
@@ -24,11 +24,11 @@
             <td>{{ employee.designation|default:"—" }}</td>
             <td>{{ employee.department|default:"—" }}</td>
             <td class="mono">{{ employee.phone|default:"—" }}</td>
-            <td>{% if employee.is_active %}<span class="pill p">On roll</span>{% else %}<span class="pill w">Left</span>{% endif %}</td>
+            <td>{% if employee.is_active %}<span class="pill p">Active</span>{% else %}<span class="pill w">Inactive</span>{% endif %}</td>
             <td><a class="btn secondary small" href="{% url 'employee_edit' employee.pk %}">Edit</a></td>
           </tr>
         {% empty %}
-          <tr><td colspan="7" class="empty">No employees on the list yet. Add the first one to start marking attendance.</td></tr>
+          <tr><td colspan="7" class="empty">No parties on the list yet. Add the first one to start tracking LR coming.</td></tr>
         {% endfor %}
         </tbody>
       </table>

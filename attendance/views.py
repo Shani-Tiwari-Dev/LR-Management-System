@@ -42,9 +42,9 @@ def mark_attendance(request):
                         "reason": data["reason"],
                     },
                 )
-            messages.success(request, f"Attendance saved for {day:%d %b %Y}.")
+            messages.success(request, f"LR coming status saved for {day:%d %b %Y}.")
             return redirect(f"{request.path}?date={day:%Y-%m-%d}")
-        messages.error(request, "Some rows need a reason before this sheet can be saved.")
+        messages.error(request, "Some rows need a remark before this sheet can be saved.")
     else:
         initial = []
         for emp in employees:
@@ -104,7 +104,7 @@ def employee_form(request, pk=None):
     form = EmployeeForm(request.POST or None, instance=employee)
     if request.method == "POST" and form.is_valid():
         saved = form.save()
-        messages.success(request, f"Saved {saved.name}.")
+        messages.success(request, f"Saved party {saved.name}.")
         return redirect("employee_list")
     return render(request, "attendance/employee_form.html", {
         "active": "employees",

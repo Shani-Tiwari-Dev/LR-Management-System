@@ -4,16 +4,16 @@
 
 {% block content %}
 <div class="tiles">
-  <div class="tile"><div class="figure">{{ employee_count }}</div><div class="caption">Employees on roll</div></div>
-  <div class="tile good"><div class="figure">{{ present_today }}</div><div class="caption">Present today</div></div>
-  <div class="tile bad"><div class="figure">{{ absent_today }}</div><div class="caption">Absent today</div></div>
+  <div class="tile"><div class="figure">{{ employee_count }}</div><div class="caption">Parties tracked</div></div>
+  <div class="tile good"><div class="figure">{{ present_today }}</div><div class="caption">LR received today</div></div>
+  <div class="tile bad"><div class="figure">{{ absent_today }}</div><div class="caption">LR not received today</div></div>
   <div class="tile"><div class="figure">{{ inquiries_today }}</div><div class="caption">Inquiries logged today</div></div>
-  <div class="tile warn"><div class="figure">{{ open_inquiries }}</div><div class="caption">Inquiries still open</div></div>
+  <div class="tile warn"><div class="figure">{{ open_inquiries }}</div><div class="caption">Inquiries still unsolved</div></div>
 </div>
 
 {% if not marked_today %}
   <div class="notice info">
-    Attendance for {{ today|date:"d M Y" }} has not been marked yet.
+    LR coming status for {{ today|date:"d M Y" }} has not been marked yet.
     <a href="{% url 'mark_attendance' %}">Open the sheet</a>.
   </div>
 {% endif %}
@@ -54,9 +54,9 @@
   <div class="panel-head"><div><h2>Where to go next</h2></div></div>
   <div class="panel-body">
     <div class="actions">
-      <a class="btn" href="{% url 'mark_attendance' %}">Mark attendance</a>
+      <a class="btn" href="{% url 'mark_attendance' %}">Mark LR coming</a>
       <a class="btn secondary" href="{% url 'inquiry_dashboard' %}">Add an LR inquiry</a>
-      <a class="btn secondary" href="{% url 'monthly_attendance' %}">Monthly attendance report</a>
+      <a class="btn secondary" href="{% url 'monthly_attendance' %}">Monthly LR coming report</a>
       <a class="btn secondary" href="{% url 'report_builder' %}">Clean a billing file</a>
     </div>
   </div>

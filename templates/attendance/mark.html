@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Mark attendance · LR Desk{% endblock %}
-{% block heading %}Attendance sheet{% endblock %}
-{% block subheading %}<p style="margin:2px 0 0;color:var(--muted)">Mark present. Anything other than present needs a reason.</p>{% endblock %}
+{% block title %}Mark LR coming · LR Desk{% endblock %}
+{% block heading %}LR coming sheet{% endblock %}
+{% block subheading %}<p style="margin:2px 0 0;color:var(--muted)">Mark LR received. Anything other than received needs a remark.</p>{% endblock %}
 {% block stamp %}{{ day|date:"D, d M Y" }}{% endblock %}
 
 {% block content %}
@@ -24,7 +24,7 @@
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th style="width:110px">Code</th><th>Employee</th><th>Status</th><th>Reason for absence</th></tr>
+          <tr><th style="width:110px">Code</th><th>Party</th><th>Status</th><th>Remarks</th></tr>
         </thead>
         <tbody>
         {% for employee, form in rows %}
@@ -48,7 +48,7 @@
             </td>
           </tr>
         {% empty %}
-          <tr><td colspan="4" class="empty">No active employees yet. <a href="{% url 'employee_add' %}">Add an employee</a> to start marking attendance.</td></tr>
+          <tr><td colspan="4" class="empty">No active parties yet. <a href="{% url 'employee_add' %}">Add a party</a> to start tracking LR coming.</td></tr>
         {% endfor %}
         </tbody>
       </table>
@@ -56,7 +56,7 @@
     {% if rows %}
     <div class="panel-body">
       <div class="actions">
-        <button class="btn" type="submit">Save attendance</button>
+        <button class="btn" type="submit">Save LR status</button>
         <a class="btn secondary" href="{% url 'day_register' %}?date={{ day|date:'Y-m-d' }}">View day register</a>
       </div>
     </div>
@@ -78,7 +78,7 @@
     var input = cell.querySelector('input');
     if (input) {
       input.required = !!show;
-      input.placeholder = show ? 'Why were they away?' : '';
+      input.placeholder = show ? 'Why hasn\'t the LR come in?' : '';
       if (!show) input.value = '';
     }
   }

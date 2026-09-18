@@ -34,8 +34,19 @@ deployed app talks to.
 
 ### Do this before you redeploy
 
+**Option A — no terminal needed.** A ready-made `supabase_setup.sql` is
+included in this zip. Open your Supabase project → **SQL Editor** → New
+query → paste the entire contents of `supabase_setup.sql` → **Run**. That
+creates every table the app needs and one login (`admin` / `admin12345`).
+This file is the real, tested output of a `migrate` run — it was generated
+against a live Postgres database and replayed from empty to confirm it
+works before being included here, so it isn't a hand-written guess at the
+schema. Sign in once, then change that password from `/admin/` → Users →
+admin, since the default is now sitting in a file on your computer.
+
+**Option B — with a terminal**, if you'd rather run it directly:
+
 ```bash
-# with DATABASE_URL pointed at your Supabase pooler URI
 export DATABASE_URL="postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres"
 python manage.py migrate
 python manage.py createsuperuser

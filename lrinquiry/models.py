@@ -45,9 +45,9 @@ class Inquiry(models.Model):
     FOLLOWED = "FOLLOWED"
     CLOSED = "CLOSED"
     STATUS_CHOICES = [
-        (OPEN, "Open"),
-        (FOLLOWED, "Followed up"),
-        (CLOSED, "Closed"),
+        (OPEN, "Unsolved"),
+        (FOLLOWED, "LR coming"),
+        (CLOSED, "Solved"),
     ]
 
     inquiry_date = models.DateField(default=timezone.localdate)

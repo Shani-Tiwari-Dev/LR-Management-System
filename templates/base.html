@@ -14,16 +14,16 @@
   <aside class="rail">
     <div class="rail-brand">
       <div class="mark">LR&nbsp;DESK</div>
-      <div class="sub">Dispatch &amp; staff records</div>
+      <div class="sub">LR coming tracker</div>
     </div>
     <nav>
       <a href="{% url 'dashboard' %}" class="{% if active == 'dashboard' %}active{% endif %}">Dashboard</a>
-      <div class="group">Attendance</div>
+      <div class="group">LR coming</div>
       <a href="{% url 'mark_attendance' %}" class="{% if active == 'mark' %}active{% endif %}">Mark today</a>
       <a href="{% url 'day_register' %}" class="{% if active == 'register' %}active{% endif %}">Day register</a>
-      <a href="{% url 'employee_list' %}" class="{% if active == 'employees' %}active{% endif %}">Employees</a>
+      <a href="{% url 'employee_list' %}" class="{% if active == 'employees' %}active{% endif %}">Parties</a>
       <a href="{% url 'monthly_attendance' %}" class="{% if active == 'monthly' %}active{% endif %}">Monthly report</a>
-      <div class="group">LR</div>
+      <div class="group">LR inquiry</div>
       <a href="{% url 'inquiry_dashboard' %}" class="{% if active == 'inquiry' %}active{% endif %}">Inquiry board</a>
       <a href="{% url 'contact_book' %}" class="{% if active == 'contacts' %}active{% endif %}">Saved contacts</a>
       <a href="{% url 'report_builder' %}" class="{% if active == 'builder' %}active{% endif %}">Report builder</a>

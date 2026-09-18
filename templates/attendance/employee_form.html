@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}{% if employee %}Edit employee{% else %}Add employee{% endif %} · LR Desk{% endblock %}
-{% block heading %}{% if employee %}Edit {{ employee.name }}{% else %}Add an employee{% endif %}{% endblock %}
+{% block title %}{% if employee %}Edit party{% else %}Add party{% endif %} · LR Desk{% endblock %}
+{% block heading %}{% if employee %}Edit {{ employee.name }}{% else %}Add a party{% endif %}{% endblock %}
 
 {% block content %}
 <div class="panel" style="max-width:720px">
@@ -21,7 +21,7 @@
         {% endfor %}
       </div>
       <div class="actions">
-        <button class="btn" type="submit">Save employee</button>
+        <button class="btn" type="submit">Save party</button>
         <a class="btn secondary" href="{% url 'employee_list' %}">Cancel</a>
       </div>
     </form>

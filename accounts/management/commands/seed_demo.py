@@ -1,4 +1,4 @@
-"""Create a starter admin account plus a few employees and contacts.
+"""Create a starter admin account plus a few parties and contacts.
 
     python manage.py seed_demo
 """
@@ -11,11 +11,12 @@ from django.core.management.base import BaseCommand
 from attendance.models import Attendance, Employee
 from lrinquiry.models import Contact, Inquiry
 
+# (code, party name, transport name, route / area, phone)
 EMPLOYEES = [
-    ("EMP-001", "Rakesh Patel", "Dispatch supervisor", "Dispatch", "9825011223"),
-    ("EMP-002", "Meena Shah", "Billing clerk", "Accounts", "9825044556"),
-    ("EMP-003", "Imran Sheikh", "Loader", "Warehouse", "9825077889"),
-    ("EMP-004", "Priya Desai", "LR follow up", "Dispatch", "9825099001"),
+    ("PTY-001", "Shree Krishna Traders", "Gati Express", "Ahmedabad", "9825011223"),
+    ("PTY-002", "Balaji Agencies", "VRL Logistics", "Surat", "9825044556"),
+    ("PTY-003", "Patel Enterprises", "Safexpress", "Vadodara", "9825077889"),
+    ("PTY-004", "Om Traders", "DTDC Cargo", "Rajkot", "9825099001"),
 ]
 
 CONTACTS = [
@@ -50,7 +51,7 @@ class Command(BaseCommand):
                 Attendance.objects.get_or_create(
                     employee=employee,
                     date=day,
-                    defaults={"status": Attendance.PRESENT},
+                    defaults={"status": Attendance.PRESENT},  # LR received
                 )
 
         for name, phone, party, transport in CONTACTS:
