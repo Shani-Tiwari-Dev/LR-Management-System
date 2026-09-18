@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY", "dev-only-insecure-key-change-me-before-deploy"
 )
 
-DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
+DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -125,6 +125,18 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
+
+# Serverless (Vercel) has no build step that reliably survives into the
+# running function, so this project does not depend on collectstatic.
+# WHITENOISE_USE_FINDERS makes WhiteNoise serve files straight out of
+# STATICFILES_DIRS (the committed static/ folder) at request time - that
+# folder is guaranteed to be present because it's part of the source tree.
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = DEBUG
+
+# Plain (non-manifest) storage. A manifest backend raises a hard ValueError
+# from any {% static %} tag whose file isn't listed in staticfiles.json,
+# and that file is only produced by collectstatic - which never runs here.
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {

@@ -2,6 +2,56 @@
 
 Django + Supabase (PostgreSQL) + plain HTML/CSS, ready to deploy on Vercel.
 
+## Fixed in this version
+
+Two real bugs were found and reproduced (not guessed at):
+
+1. **Every page 500'd once `DEBUG` was off**, because `STORAGES["staticfiles"]`
+   used a manifest-based backend (`CompressedManifestStaticFilesStorage`).
+   That backend raises a hard `ValueError` from any `{% static %}` tag whose
+   file isn't listed in a `staticfiles.json` manifest — and that manifest is
+   only produced by `collectstatic`, which this project's Vercel build never
+   ran. Fixed by switching to plain `StaticFilesStorage` and setting
+   `WHITENOISE_USE_FINDERS = True`, so WhiteNoise serves `static/css/app.css`
+   straight from the committed source folder — no build step, no manifest,
+   nothing that can go missing. Verified: CSS now returns 200 with real
+   content even with zero `collectstatic` step and no `staticfiles_build/`
+   directory present at all.
+2. **`vercel.json` and `build_files.sh` simplified to match** — the static
+   build entry and `/static/` route are gone, since WhiteNoise now handles
+   static files at request time via `includeFiles: "static/**"`.
+
+**The "crashes immediately after submitting the login form" symptom is not a
+code bug** — it was reproduced directly and traced to one specific cause:
+the production database has never had `python manage.py migrate` run
+against it, so tables like `auth_user` don't exist yet. Django gets as far
+as rendering the login page (no query needed), then the POST hits
+`authenticate()`, which queries a table that isn't there, and crashes with
+`OperationalError: no such table: auth_user` (Postgres: `relation "auth_user"
+does not exist`). This is a very common miss with Supabase + Vercel: the
+database you migrate locally against SQLite is not the same database your
+deployed app talks to.
+
+### Do this before you redeploy
+
+```bash
+# with DATABASE_URL pointed at your Supabase pooler URI
+export DATABASE_URL="postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres"
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+If you already ran `seed_demo` against SQLite, run it again with
+`DATABASE_URL` set so the same `admin` account and sample rows exist in
+Supabase too. Confirm the tables exist by checking the Supabase dashboard's
+Table Editor before trying to log in on the live site.
+
+If login still crashes after migrating, the fastest way to find out why is
+Vercel's **Runtime Logs** (not the build log) for that specific request —
+Project → Deployments → the deployment → Functions/Logs. Paste that
+traceback rather than the build log; the build log can't show a login-time
+error because the crash happens after the build has already succeeded.
+
 ## What is inside
 
 | Module | Where | What it does |
