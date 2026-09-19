@@ -17,16 +17,40 @@
       <div class="sub">LR coming tracker</div>
     </div>
     <nav>
-      <a href="{% url 'dashboard' %}" class="{% if active == 'dashboard' %}active{% endif %}">Dashboard</a>
+      <a href="{% url 'dashboard' %}" class="{% if active == 'dashboard' %}active{% endif %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        Dashboard
+      </a>
       <div class="group">LR coming</div>
-      <a href="{% url 'mark_attendance' %}" class="{% if active == 'mark' %}active{% endif %}">Mark today</a>
-      <a href="{% url 'day_register' %}" class="{% if active == 'register' %}active{% endif %}">Day register</a>
-      <a href="{% url 'employee_list' %}" class="{% if active == 'employees' %}active{% endif %}">LR boy</a>
-      <a href="{% url 'monthly_attendance' %}" class="{% if active == 'monthly' %}active{% endif %}">Monthly report</a>
+      <a href="{% url 'mark_attendance' %}" class="{% if active == 'mark' %}active{% endif %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Mark today
+      </a>
+      <a href="{% url 'day_register' %}" class="{% if active == 'register' %}active{% endif %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Day register
+      </a>
+      <a href="{% url 'employee_list' %}" class="{% if active == 'employees' %}active{% endif %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        LR boy
+      </a>
+      <a href="{% url 'monthly_attendance' %}" class="{% if active == 'monthly' %}active{% endif %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+        Monthly report
+      </a>
       <div class="group">LR inquiry</div>
-      <a href="{% url 'inquiry_dashboard' %}" class="{% if active == 'inquiry' %}active{% endif %}">Inquiry board</a>
-      <a href="{% url 'contact_book' %}" class="{% if active == 'contacts' %}active{% endif %}">Saved contacts</a>
-      <a href="{% url 'report_builder' %}" class="{% if active == 'builder' %}active{% endif %}">Report builder</a>
+      <a href="{% url 'inquiry_dashboard' %}" class="{% if active == 'inquiry' %}active{% endif %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Inquiry board
+      </a>
+      <a href="{% url 'contact_book' %}" class="{% if active == 'contacts' %}active{% endif %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Saved contacts
+      </a>
+      <a href="{% url 'report_builder' %}" class="{% if active == 'builder' %}active{% endif %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        Report builder
+      </a>
     </nav>
     <div class="rail-foot">
       <div class="who">{{ request.user.get_full_name|default:request.user.username }}</div>

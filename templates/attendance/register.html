@@ -21,7 +21,7 @@
   <div class="panel-body tight">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Code</th><th>LR boy</th><th>Status</th><th>Remarks</th></tr></thead>
+        <thead><tr><th>Code</th><th>LR boy</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
         <tbody>
         {% for record in records %}
           <tr>
@@ -29,9 +29,18 @@
             <td>{{ record.employee.name }}</td>
             <td><span class="pill {{ record.status|lower }}">{{ record.get_status_display }}</span></td>
             <td>{{ record.reason|default:"—" }}</td>
+            <td>
+              <div class="row-actions">
+                <a class="btn secondary small" href="{% url 'mark_attendance' %}?date={{ day|date:'Y-m-d' }}">Edit</a>
+                <form method="post" action="{% url 'attendance_delete' record.pk %}" onsubmit="return confirm('Remove this entry for {{ day|date:'d M Y' }}?');">
+                  {% csrf_token %}
+                  <button class="btn danger small" type="submit">Delete</button>
+                </form>
+              </div>
+            </td>
           </tr>
         {% empty %}
-          <tr><td colspan="4" class="empty">Nothing marked for this date.</td></tr>
+          <tr><td colspan="5" class="empty">Nothing marked for this date.</td></tr>
         {% endfor %}
         </tbody>
       </table>

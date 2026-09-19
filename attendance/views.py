@@ -86,6 +86,17 @@ def day_register(request):
 
 
 @login_required
+def delete_attendance(request, pk):
+    record = get_object_or_404(Attendance, pk=pk)
+    if request.method == "POST":
+        day = record.date
+        record.delete()
+        messages.success(request, f"Removed the {day:%d %b %Y} entry.")
+        return redirect(f"/attendance/register/?date={day:%Y-%m-%d}")
+    return redirect("day_register")
+
+
+@login_required
 def employee_list(request):
     query = request.GET.get("q", "").strip()
     employees = Employee.objects.all()

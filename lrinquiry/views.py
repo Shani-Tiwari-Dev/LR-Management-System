@@ -3,12 +3,27 @@ from datetime import date, datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Case, IntegerField, Q, When
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import InquiryForm
 from .models import Contact, Inquiry
+
+
+# Unsolved on top, LR coming in the middle, solved sinks to the bottom.
+_STATUS_ORDER = Case(
+    When(status=Inquiry.OPEN, then=0),
+    When(status=Inquiry.FOLLOWED, then=1),
+    When(status=Inquiry.CLOSED, then=2),
+    output_field=IntegerField(),
+)
+
+
+def _sorted(queryset):
+    return queryset.annotate(status_rank=_STATUS_ORDER).order_by(
+        "status_rank", "-inquiry_date", "-created_at"
+    )
 
 
 def _parse_day(raw):
@@ -59,6 +74,8 @@ def inquiry_dashboard(request):
         inquiries = inquiries.filter(inquiry_date=day)
         heading = f"Inquiries on {day:%d %b %Y}"
 
+    inquiries = _sorted(inquiries)
+
     form = InquiryForm(initial={"inquiry_date": day})
 
     context = {
@@ -99,7 +116,7 @@ def add_inquiry(request):
         "day": day,
         "prev_day": day - timedelta(days=1),
         "next_day": day + timedelta(days=1),
-        "inquiries": Inquiry.objects.select_related("contact").filter(inquiry_date=day),
+        "inquiries": _sorted(Inquiry.objects.select_related("contact").filter(inquiry_date=day)),
         "heading": f"Inquiries on {day:%d %b %Y}",
         "query": "",
         "form": form,
