@@ -104,7 +104,7 @@ def employee_form(request, pk=None):
     form = EmployeeForm(request.POST or None, instance=employee)
     if request.method == "POST" and form.is_valid():
         saved = form.save()
-        messages.success(request, f"Saved party {saved.name}.")
+        messages.success(request, f"Saved LR boy {saved.name}.")
         return redirect("employee_list")
     return render(request, "attendance/employee_form.html", {
         "active": "employees",

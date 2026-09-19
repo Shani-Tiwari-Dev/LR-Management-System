@@ -1,4 +1,4 @@
-"""Create a starter admin account plus a few parties and contacts.
+"""Create a starter admin account plus the LR boy and sample contacts.
 
     python manage.py seed_demo
 """
@@ -11,12 +11,9 @@ from django.core.management.base import BaseCommand
 from attendance.models import Attendance, Employee
 from lrinquiry.models import Contact, Inquiry
 
-# (code, party name, transport name, route / area, phone)
+# (code, name, role, area covered, phone) - just the one LR boy.
 EMPLOYEES = [
-    ("PTY-001", "Shree Krishna Traders", "Gati Express", "Ahmedabad", "9825011223"),
-    ("PTY-002", "Balaji Agencies", "VRL Logistics", "Surat", "9825044556"),
-    ("PTY-003", "Patel Enterprises", "Safexpress", "Vadodara", "9825077889"),
-    ("PTY-004", "Om Traders", "DTDC Cargo", "Rajkot", "9825099001"),
+    ("LR-01", "Rakesh Patel", "LR boy", "Ahmedabad", "9825011223"),
 ]
 
 CONTACTS = [

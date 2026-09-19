@@ -2,13 +2,13 @@ from django.db import models
 
 
 class Employee(models.Model):
-    code = models.CharField("Party code", max_length=20, unique=True)
-    name = models.CharField("Party name", max_length=120)
-    designation = models.CharField("Transport name", max_length=80, blank=True)
-    department = models.CharField("Route / area", max_length=80, blank=True)
+    code = models.CharField("LR boy code", max_length=20, unique=True)
+    name = models.CharField("LR boy name", max_length=120)
+    designation = models.CharField("Role", max_length=80, blank=True)
+    department = models.CharField("Area covered", max_length=80, blank=True)
     phone = models.CharField("Contact number", max_length=20, blank=True)
     date_joined = models.DateField("Added on", null=True, blank=True)
-    is_active = models.BooleanField("Currently tracked", default=True)
+    is_active = models.BooleanField("Currently active", default=True)
 
     class Meta:
         ordering = ["name"]
@@ -25,14 +25,14 @@ class Attendance(models.Model):
     WEEK_OFF = "W"
 
     STATUS_CHOICES = [
-        (PRESENT, "LR received"),
-        (ABSENT, "LR not received"),
-        (HALF_DAY, "Partially received"),
-        (LEAVE, "LR pending"),
-        (WEEK_OFF, "Not expected"),
+        (PRESENT, "LR coming"),
+        (ABSENT, "LR not coming"),
+        (HALF_DAY, "Half day"),
+        (LEAVE, "On leave"),
+        (WEEK_OFF, "Week off"),
     ]
 
-    # Statuses that require an explanation for why the LR hasn't come in.
+    # Statuses that require an explanation for why the LR boy isn't coming.
     REASON_REQUIRED = {ABSENT, HALF_DAY, LEAVE}
 
     employee = models.ForeignKey(
@@ -43,7 +43,7 @@ class Attendance(models.Model):
     reason = models.TextField(
         "Remarks",
         blank=True,
-        help_text="Filled in whenever the LR hasn't been received.",
+        help_text="Filled in whenever the LR boy isn't coming.",
     )
     marked_at = models.DateTimeField(auto_now=True)
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Mark LR coming · LR Desk{% endblock %}
 {% block heading %}LR coming sheet{% endblock %}
-{% block subheading %}<p style="margin:2px 0 0;color:var(--muted)">Mark LR received. Anything other than received needs a remark.</p>{% endblock %}
+{% block subheading %}<p style="margin:2px 0 0;color:var(--muted)">Mark whether the LR boy is coming. Anything other than coming needs a remark.</p>{% endblock %}
 {% block stamp %}{{ day|date:"D, d M Y" }}{% endblock %}
 
 {% block content %}
@@ -24,7 +24,7 @@
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th style="width:110px">Code</th><th>Party</th><th>Status</th><th>Remarks</th></tr>
+          <tr><th style="width:110px">Code</th><th>LR boy</th><th>Status</th><th>Remarks</th></tr>
         </thead>
         <tbody>
         {% for employee, form in rows %}
@@ -48,7 +48,7 @@
             </td>
           </tr>
         {% empty %}
-          <tr><td colspan="4" class="empty">No active parties yet. <a href="{% url 'employee_add' %}">Add a party</a> to start tracking LR coming.</td></tr>
+          <tr><td colspan="4" class="empty">No LR boy set up yet. Add one from the Django admin panel to start marking LR coming status.</td></tr>
         {% endfor %}
         </tbody>
       </table>

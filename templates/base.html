@@ -6,14 +6,14 @@
   <title>{% block title %}LR Desk{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body>
 <div class="shell">
   <aside class="rail">
     <div class="rail-brand">
-      <div class="mark">LR&nbsp;DESK</div>
+      <div class="mark"><span class="mark-icon"></span>LR Desk</div>
       <div class="sub">LR coming tracker</div>
     </div>
     <nav>
@@ -21,7 +21,7 @@
       <div class="group">LR coming</div>
       <a href="{% url 'mark_attendance' %}" class="{% if active == 'mark' %}active{% endif %}">Mark today</a>
       <a href="{% url 'day_register' %}" class="{% if active == 'register' %}active{% endif %}">Day register</a>
-      <a href="{% url 'employee_list' %}" class="{% if active == 'employees' %}active{% endif %}">Parties</a>
+      <a href="{% url 'employee_list' %}" class="{% if active == 'employees' %}active{% endif %}">LR boy</a>
       <a href="{% url 'monthly_attendance' %}" class="{% if active == 'monthly' %}active{% endif %}">Monthly report</a>
       <div class="group">LR inquiry</div>
       <a href="{% url 'inquiry_dashboard' %}" class="{% if active == 'inquiry' %}active{% endif %}">Inquiry board</a>

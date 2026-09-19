@@ -1,34 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Parties · LR Desk{% endblock %}
-{% block heading %}Parties{% endblock %}
+{% block title %}LR boy · LR Desk{% endblock %}
+{% block heading %}LR boy{% endblock %}
 
 {% block content %}
 <div class="panel">
   <div class="panel-head">
-    <form method="get" class="toolbar">
-      <div class="field"><label for="q">Find by name</label>
-      <input type="text" id="q" name="q" value="{{ query }}" placeholder="Type a name"></div>
-      <button class="btn secondary" type="submit">Search</button>
-    </form>
-    <a class="btn" href="{% url 'employee_add' %}">Add party</a>
+    <div><p style="margin:0">The person who goes out to collect the LR each day.</p></div>
   </div>
   <div class="panel-body tight">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Code</th><th>Name</th><th>Transport name</th><th>Route / area</th><th>Phone</th><th>Status</th><th></th></tr></thead>
+        <thead><tr><th>Code</th><th>Name</th><th>Phone</th><th>Status</th><th></th></tr></thead>
         <tbody>
         {% for employee in employees %}
           <tr>
             <td class="mono">{{ employee.code }}</td>
             <td>{{ employee.name }}</td>
-            <td>{{ employee.designation|default:"—" }}</td>
-            <td>{{ employee.department|default:"—" }}</td>
             <td class="mono">{{ employee.phone|default:"—" }}</td>
             <td>{% if employee.is_active %}<span class="pill p">Active</span>{% else %}<span class="pill w">Inactive</span>{% endif %}</td>
             <td><a class="btn secondary small" href="{% url 'employee_edit' employee.pk %}">Edit</a></td>
           </tr>
         {% empty %}
-          <tr><td colspan="7" class="empty">No parties on the list yet. Add the first one to start tracking LR coming.</td></tr>
+          <tr><td colspan="5" class="empty">No LR boy set up yet. Ask an admin to add one from the Django admin panel.</td></tr>
         {% endfor %}
         </tbody>
       </table>

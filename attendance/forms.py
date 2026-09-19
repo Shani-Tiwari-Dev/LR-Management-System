@@ -12,8 +12,8 @@ class EmployeeForm(forms.ModelForm):
         ]
         widgets = {
             "date_joined": forms.DateInput(attrs={"type": "date"}),
-            "code": forms.TextInput(attrs={"placeholder": "PTY-014"}),
-            "name": forms.TextInput(attrs={"placeholder": "Party name"}),
+            "code": forms.TextInput(attrs={"placeholder": "LR-01"}),
+            "name": forms.TextInput(attrs={"placeholder": "LR boy's name"}),
         }
 
 

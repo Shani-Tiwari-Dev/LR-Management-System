@@ -5,8 +5,8 @@
 
 {% block content %}
 <div class="tiles">
-  <div class="tile good"><div class="figure">{{ present }}</div><div class="caption">LR received</div></div>
-  <div class="tile bad"><div class="figure">{{ absent }}</div><div class="caption">LR not received</div></div>
+  <div class="tile good"><div class="figure">{{ present }}</div><div class="caption">LR coming</div></div>
+  <div class="tile bad"><div class="figure">{{ absent }}</div><div class="caption">LR not coming</div></div>
 </div>
 
 <div class="panel">
@@ -21,7 +21,7 @@
   <div class="panel-body tight">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Code</th><th>Party</th><th>Status</th><th>Remarks</th></tr></thead>
+        <thead><tr><th>Code</th><th>LR boy</th><th>Status</th><th>Remarks</th></tr></thead>
         <tbody>
         {% for record in records %}
           <tr>

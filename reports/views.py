@@ -95,8 +95,8 @@ def monthly_attendance_xlsx(request):
     header_fill = PatternFill("solid", fgColor="14532D")
     header_font = Font(color="FFFFFF", bold=True)
 
-    header = ["Code", "Party", "Route / area"] + [str(d) for d in days] + [
-        "Received", "Not received", "Partial", "Pending", "Not expected", "Received total"
+    header = ["Code", "LR boy", "Role"] + [str(d) for d in days] + [
+        "Coming", "Not coming", "Half day", "On leave", "Week off", "Coming total"
     ]
     sheet.append(header)
     for cell in sheet[1]:
@@ -121,7 +121,7 @@ def monthly_attendance_xlsx(request):
 
     # Second sheet: every non-receipt with the remark that was recorded.
     reason_sheet = wb.create_sheet("LR remarks")
-    reason_sheet.append(["Date", "Code", "Party", "Status", "Remark"])
+    reason_sheet.append(["Date", "Code", "LR boy", "Status", "Remark"])
     for cell in reason_sheet[1]:
         cell.fill = header_fill
         cell.font = header_font
