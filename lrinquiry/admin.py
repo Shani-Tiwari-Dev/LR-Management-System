@@ -13,7 +13,7 @@ class ContactAdmin(admin.ModelAdmin):
 class InquiryAdmin(admin.ModelAdmin):
     list_display = (
         "inquiry_date", "party_name", "transport_name",
-        "bill_series", "bill_no", "lr_no", "contact", "status",
+        "bill_series", "bill_no", "bill_date", "lr_no", "contact", "status",
     )
     list_filter = ("status", "inquiry_date", "transport_name")
     search_fields = ("party_name", "bill_no", "lr_no", "contact__name")

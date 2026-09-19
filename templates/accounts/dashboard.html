@@ -44,7 +44,7 @@
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Date</th><th>Party</th><th>Transport</th><th>Bill</th><th>LR no</th><th>Contact</th><th>Status</th><th></th></tr>
+          <tr><th>Date</th><th>Party</th><th>Transport</th><th>Bill</th><th>Bill date</th><th>Cartoon</th><th>Contact</th><th>Status</th><th></th></tr>
         </thead>
         <tbody>
         {% for inquiry in recent_inquiries %}
@@ -53,12 +53,13 @@
             <td>{{ inquiry.party_name }}</td>
             <td>{{ inquiry.transport_name }}</td>
             <td class="mono">{{ inquiry.bill_reference }}</td>
-            <td class="mono">{{ inquiry.lr_no|default:"pending" }}</td>
+            <td class="mono">{{ inquiry.bill_date|date:"d-m-Y"|default:"—" }}</td>
+            <td class="mono">{{ inquiry.lr_no|default:"—" }}</td>
             <td>{{ inquiry.contact.name }}<br><span class="mono" style="color:var(--text-faint)">{{ inquiry.contact.phone }}</span></td>
             <td>
               <form method="post" action="{% url 'update_inquiry_status' inquiry.pk %}" class="status-quick">
                 {% csrf_token %}
-                <select name="status" class="status-select {{ inquiry.status|lower }}" onchange="this.form.submit()">
+                <select name="status" class="status-select {{ inquiry.status|lower }}" onchange="window.lrAjaxStatus||this.form.submit()">
                   {% for value, label in inquiry.STATUS_CHOICES %}
                     <option value="{{ value }}" {% if value == inquiry.status %}selected{% endif %}>{{ label }}</option>
                   {% endfor %}
@@ -67,12 +68,12 @@
             </td>
             <td>
               <a class="btn wa icon-only" target="_blank" rel="noopener" href="{{ inquiry.whatsapp_url }}" title="Message {{ inquiry.contact.name }} on WhatsApp" aria-label="Message on WhatsApp">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.48-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.53.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.6-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.87 1.21 3.07.15.2 2.09 3.2 5.08 4.48.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.24-.7.24-1.29.17-1.42-.07-.12-.27-.2-.57-.35z"/><path d="M12.04 2C6.58 2 2.13 6.42 2.13 11.86c0 1.87.51 3.63 1.4 5.15L2 22l5.14-1.5a9.98 9.98 0 0 0 4.9 1.28h.01c5.46 0 9.91-4.42 9.91-9.86C21.96 6.48 17.5 2 12.04 2zm0 18.02h-.01a8.2 8.2 0 0 1-4.17-1.14l-.3-.18-3.05.89.89-2.96-.2-.31a8.14 8.14 0 0 1-1.26-4.36c0-4.5 3.68-8.16 8.2-8.16 2.19 0 4.24.85 5.79 2.4a8.1 8.1 0 0 1 2.4 5.77c0 4.5-3.68 8.15-8.29 8.15z"/></svg>
+                <svg width="15" height="15" fill="currentColor" aria-hidden="true"><use href="#i-wa"/></svg>
               </a>
             </td>
           </tr>
         {% empty %}
-          <tr><td colspan="8" class="empty">No inquiries yet. Add the first one from the inquiry board.</td></tr>
+          <tr><td colspan="9" class="empty">No inquiries yet. Add the first one from the inquiry board.</td></tr>
         {% endfor %}
         </tbody>
       </table>

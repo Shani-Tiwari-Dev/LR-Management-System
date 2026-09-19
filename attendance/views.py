@@ -71,7 +71,7 @@ def mark_attendance(request):
 @login_required
 def day_register(request):
     day = _parse_day(request.GET.get("date"))
-    records = (
+    records = list(
         Attendance.objects.filter(date=day)
         .select_related("employee")
         .order_by("employee__name")
@@ -80,8 +80,9 @@ def day_register(request):
         "active": "register",
         "day": day,
         "records": records,
-        "present": records.filter(status=Attendance.PRESENT).count(),
-        "absent": records.filter(status=Attendance.ABSENT).count(),
+        # Counted from the list already in memory - no extra queries.
+        "present": sum(r.status == Attendance.PRESENT for r in records),
+        "absent": sum(r.status == Attendance.ABSENT for r in records),
     })
 
 

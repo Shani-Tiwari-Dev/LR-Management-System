@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Monthly LR coming · LR Desk{% endblock %}
 {% block heading %}LR coming for {{ month_name }} {{ year }}{% endblock %}
-{% block stamp %}P coming · A not coming · H half day · L on leave · W week off{% endblock %}
+{% block stamp %}P LR coming · A LR not coming{% endblock %}
 
 {% block content %}
 <div class="panel no-print">
@@ -45,7 +45,7 @@
           <tr>
             <th style="text-align:left">LR boy</th>
             {% for day in days %}<th>{{ day }}</th>{% endfor %}
-            <th>P</th><th>A</th><th>H</th><th>L</th><th>W</th><th>Coming total</th>
+            <th>P</th><th>A</th><th>Coming total</th>
           </tr>
         </thead>
         <tbody>
@@ -57,9 +57,6 @@
             {% endfor %}
             <td class="mono">{{ row.counts.P }}</td>
             <td class="mono">{{ row.counts.A }}</td>
-            <td class="mono">{{ row.counts.H }}</td>
-            <td class="mono">{{ row.counts.L }}</td>
-            <td class="mono">{{ row.counts.W }}</td>
             <td class="mono"><b>{{ row.payable }}</b></td>
           </tr>
         {% empty %}

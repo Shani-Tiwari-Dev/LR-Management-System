@@ -48,7 +48,7 @@ class Command(BaseCommand):
                 Attendance.objects.get_or_create(
                     employee=employee,
                     date=day,
-                    defaults={"status": Attendance.PRESENT},  # LR received
+                    defaults={"status": Attendance.PRESENT},  # LR coming
                 )
 
         for name, phone, party, transport in CONTACTS:

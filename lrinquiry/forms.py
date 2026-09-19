@@ -26,7 +26,7 @@ class InquiryForm(forms.ModelForm):
         model = Inquiry
         fields = [
             "inquiry_date", "party_name", "transport_name",
-            "bill_series", "bill_no", "lr_no", "remarks", "status",
+            "bill_series", "bill_no", "bill_date", "lr_no", "remarks", "status",
         ]
         widgets = {
             "inquiry_date": forms.DateInput(attrs={"type": "date"}),
@@ -34,9 +34,18 @@ class InquiryForm(forms.ModelForm):
             "transport_name": forms.TextInput(attrs={"list": "transport-names", "autocomplete": "off"}),
             "bill_series": forms.TextInput(attrs={"placeholder": "e.g. GJ"}),
             "bill_no": forms.TextInput(attrs={"placeholder": "e.g. 10482"}),
-            "lr_no": forms.TextInput(attrs={"placeholder": "Leave blank until the LR arrives"}),
+            "bill_date": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+            "lr_no": forms.TextInput(attrs={"placeholder": "e.g. 12"}),
             "remarks": forms.Textarea(attrs={"rows": 2}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Bill date is required for every new inquiry. Inquiries saved before
+        # the field existed have none, so they can still be edited without
+        # being forced to fill it in.
+        legacy_row = self.instance.pk and not self.instance.bill_date
+        self.fields["bill_date"].required = not legacy_row
 
     def clean_contact_phone(self):
         digits = clean_number(self.cleaned_data["contact_phone"])

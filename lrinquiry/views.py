@@ -26,6 +26,11 @@ def _sorted(queryset):
     )
 
 
+# Searching every day can match thousands of rows; only the first batch is
+# rendered so the page stays small and quick.
+SEARCH_LIMIT = 100
+
+
 def _parse_day(raw):
     if raw:
         try:
@@ -33,6 +38,22 @@ def _parse_day(raw):
         except ValueError:
             pass
     return date.today()
+
+
+def _distinct_values(field):
+    """Unique non-empty values of one Inquiry column, sorted.
+
+    order_by() with no arguments is essential: Inquiry has a default
+    ordering (date, created_at) and Django adds ordering columns to a
+    SELECT DISTINCT, which made this return *every row* instead of the
+    unique names - the whole inquiry table was pulled on each page load.
+    """
+    return list(
+        Inquiry.objects.exclude(**{field: ""})
+        .order_by(field)
+        .values_list(field, flat=True)
+        .distinct()
+    )
 
 
 def _datalists():
@@ -45,12 +66,8 @@ def _datalists():
             for c in contacts
         ]),
         "contact_names": sorted({c.name for c in contacts}),
-        "party_names": sorted(
-            {p for p in Inquiry.objects.values_list("party_name", flat=True).distinct() if p}
-        ),
-        "transport_names": sorted(
-            {t for t in Inquiry.objects.values_list("transport_name", flat=True).distinct() if t}
-        ),
+        "party_names": _distinct_values("party_name"),
+        "transport_names": _distinct_values("transport_name"),
     }
 
 
@@ -61,20 +78,23 @@ def inquiry_dashboard(request):
     query = request.GET.get("q", "").strip()
 
     inquiries = Inquiry.objects.select_related("contact")
+    truncated = False
     if query:
-        inquiries = inquiries.filter(
+        inquiries = _sorted(inquiries.filter(
             Q(party_name__icontains=query)
             | Q(transport_name__icontains=query)
             | Q(bill_no__icontains=query)
             | Q(lr_no__icontains=query)
             | Q(contact__name__icontains=query)
-        )
+        ))
+        # One extra row tells us whether there were more matches.
+        inquiries = list(inquiries[:SEARCH_LIMIT + 1])
+        truncated = len(inquiries) > SEARCH_LIMIT
+        inquiries = inquiries[:SEARCH_LIMIT]
         heading = f"Search results for “{query}”"
     else:
-        inquiries = inquiries.filter(inquiry_date=day)
+        inquiries = list(_sorted(inquiries.filter(inquiry_date=day)))
         heading = f"Inquiries on {day:%d %b %Y}"
-
-    inquiries = _sorted(inquiries)
 
     form = InquiryForm(initial={"inquiry_date": day})
 
@@ -87,8 +107,8 @@ def inquiry_dashboard(request):
         "heading": heading,
         "query": query,
         "form": form,
-        "open_count": inquiries.filter(status=Inquiry.OPEN).count(),
-        "pending_lr": inquiries.filter(lr_no="").count(),
+        "truncated": truncated,
+        "search_limit": SEARCH_LIMIT,
     }
     context.update(_datalists())
     return render(request, "lrinquiry/dashboard.html", context)
@@ -116,7 +136,9 @@ def add_inquiry(request):
         "day": day,
         "prev_day": day - timedelta(days=1),
         "next_day": day + timedelta(days=1),
-        "inquiries": _sorted(Inquiry.objects.select_related("contact").filter(inquiry_date=day)),
+        "inquiries": list(
+            _sorted(Inquiry.objects.select_related("contact").filter(inquiry_date=day))
+        ),
         "heading": f"Inquiries on {day:%d %b %Y}",
         "query": "",
         "form": form,
@@ -152,16 +174,24 @@ def update_status(request, pk):
     """Quick status change from the board or dashboard card — no need to
     open the edit page just to flip Unsolved / LR coming / Solved."""
     inquiry = get_object_or_404(Inquiry, pk=pk)
+    # The board changes status in the background (no page reload); plain form
+    # posts still work as a fallback.
+    ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
     if request.method == "POST":
         status = request.POST.get("status")
         if status in dict(Inquiry.STATUS_CHOICES):
             inquiry.status = status
             inquiry.save(update_fields=["status"])
+            if ajax:
+                return JsonResponse({"ok": True, "status": status,
+                                     "label": inquiry.get_status_display()})
             messages.success(
                 request,
                 f"{inquiry.bill_reference or inquiry.party_name} marked {inquiry.get_status_display()}.",
             )
         else:
+            if ajax:
+                return JsonResponse({"ok": False}, status=400)
             messages.error(request, "That isn't a valid status.")
     referer = request.META.get("HTTP_REFERER")
     return redirect(referer or "inquiry_dashboard")

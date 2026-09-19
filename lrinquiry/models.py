@@ -50,12 +50,17 @@ class Inquiry(models.Model):
         (CLOSED, "Solved"),
     ]
 
-    inquiry_date = models.DateField(default=timezone.localdate)
+    inquiry_date = models.DateField(default=timezone.localdate, db_index=True)
     party_name = models.CharField(max_length=150)
     transport_name = models.CharField(max_length=150)
     bill_series = models.CharField(max_length=20)
     bill_no = models.CharField(max_length=40)
-    lr_no = models.CharField("LR number", max_length=60, blank=True)
+    # Date printed on the bill. Optional in the database because inquiries
+    # logged before this field existed have no bill date.
+    bill_date = models.DateField("Bill date", null=True, blank=True)
+    # The database column is still called lr_no (renaming a live column would
+    # mean extra migration risk); it is shown to users as "Cartoon".
+    lr_no = models.CharField("Cartoon", max_length=60, blank=True)
     contact = models.ForeignKey(
         Contact, on_delete=models.PROTECT, related_name="inquiries"
     )
@@ -66,6 +71,9 @@ class Inquiry(models.Model):
     class Meta:
         ordering = ["-inquiry_date", "-created_at"]
         verbose_name_plural = "Inquiries"
+        # Used by the "still unsolved" count. Declared here rather than with
+        # db_index=True so PostgreSQL doesn't also build a useless LIKE index.
+        indexes = [models.Index(fields=["status"], name="lrinquiry_status_idx")]
 
     def __str__(self):
         return f"{self.bill_series}-{self.bill_no} / {self.party_name}"

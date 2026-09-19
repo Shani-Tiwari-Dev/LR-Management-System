@@ -76,6 +76,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "lrsystem.context_processors.asset_version",
             ],
         },
     },
@@ -92,11 +93,20 @@ WSGI_APPLICATION = "lrsystem.wsgi.application"
 # postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 
+# Opening a fresh TLS connection to Supabase on every request is slow (several
+# network round trips before the first query can run). A warm Vercel instance
+# now keeps its connection for DB_CONN_MAX_AGE seconds and reuses it, and
+# conn_health_checks drops one that Supabase/Vercel closed in the meantime.
+# If Supabase ever reports "max clients reached", set DB_CONN_MAX_AGE=0 in the
+# environment to go back to one connection per request.
+DB_CONN_MAX_AGE = int(os.environ.get("DB_CONN_MAX_AGE", "60"))
+
 if DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
-            conn_max_age=0,          # serverless: no persistent connections
+            conn_max_age=DB_CONN_MAX_AGE,
+            conn_health_checks=DB_CONN_MAX_AGE > 0,
             ssl_require=True,
         )
     }
@@ -133,6 +143,12 @@ STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
 # folder is guaranteed to be present because it's part of the source tree.
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = DEBUG
+
+# Static files get a long browser cache so the stylesheet is downloaded once,
+# not on every visit. That is safe because templates link to it as
+# app.css?v=<hash of the file> (see context_processors.asset_version), so any
+# edit to the file produces a new URL.
+WHITENOISE_MAX_AGE = 60 * 60 * 24 * 365
 
 # Plain (non-manifest) storage. A manifest backend raises a hard ValueError
 # from any {% static %} tag whose file isn't listed in staticfiles.json,

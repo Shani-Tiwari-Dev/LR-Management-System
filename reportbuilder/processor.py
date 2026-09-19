@@ -15,9 +15,9 @@ import io
 import re
 from datetime import date, datetime
 
-from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
-from openpyxl.utils import get_column_letter
+# openpyxl is imported inside the two functions that need it: importing it
+# costs ~0.15s, which every cold start of the site used to pay for even on
+# pages that never touch Excel.
 
 # Final column order, exactly as requested.
 FINAL_COLUMNS = [
@@ -114,6 +114,8 @@ def read_rows(uploaded_file):
         except csv.Error:
             reader = csv.reader(io.StringIO(text))
         return {"Sheet1": [list(r) for r in reader]}
+
+    from openpyxl import load_workbook
 
     workbook = load_workbook(io.BytesIO(raw), data_only=True, read_only=True)
     sheets = {}
@@ -301,6 +303,10 @@ def process_workbook(uploaded_file, include_blank_lr=False, merge_series=False):
 
 
 def build_workbook(data, title="LR Pending"):
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+    from openpyxl.utils import get_column_letter
+
     wb = Workbook()
     sheet = wb.active
     sheet.title = title[:31]

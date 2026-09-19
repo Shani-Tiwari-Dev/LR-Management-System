@@ -25,6 +25,11 @@
     {% if form.bill_no.errors %}<div class="errors">{{ form.bill_no.errors.0 }}</div>{% endif %}
   </div>
   <div class="field">
+    <label for="{{ form.bill_date.id_for_label }}">Bill date</label>
+    {{ form.bill_date }}
+    {% if form.bill_date.errors %}<div class="errors">{{ form.bill_date.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="field">
     <label for="{{ form.contact_name.id_for_label }}">Contact person name</label>
     {{ form.contact_name }}
     <div class="help">Saved contacts appear as you type. Picking one fills the number.</div>
@@ -36,7 +41,7 @@
     {% if form.contact_phone.errors %}<div class="errors">{{ form.contact_phone.errors.0 }}</div>{% endif %}
   </div>
   <div class="field">
-    <label for="{{ form.lr_no.id_for_label }}">LR no</label>
+    <label for="{{ form.lr_no.id_for_label }}">Cartoon</label>
     {{ form.lr_no }}
     {% if form.lr_no.errors %}<div class="errors">{{ form.lr_no.errors.0 }}</div>{% endif %}
   </div>

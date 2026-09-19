@@ -20,25 +20,19 @@ class Employee(models.Model):
 class Attendance(models.Model):
     PRESENT = "P"
     ABSENT = "A"
-    HALF_DAY = "H"
-    LEAVE = "L"
-    WEEK_OFF = "W"
 
     STATUS_CHOICES = [
         (PRESENT, "LR coming"),
         (ABSENT, "LR not coming"),
-        (HALF_DAY, "Half day"),
-        (LEAVE, "On leave"),
-        (WEEK_OFF, "Week off"),
     ]
 
     # Statuses that require an explanation for why the LR boy isn't coming.
-    REASON_REQUIRED = {ABSENT, HALF_DAY, LEAVE}
+    REASON_REQUIRED = {ABSENT}
 
     employee = models.ForeignKey(
         Employee, on_delete=models.CASCADE, related_name="attendance"
     )
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=PRESENT)
     reason = models.TextField(
         "Remarks",

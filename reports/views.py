@@ -5,8 +5,6 @@ from io import BytesIO
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
-from openpyxl import Workbook
-from openpyxl.styles import Alignment, Font, PatternFill
 
 from attendance.models import Attendance, Employee
 
@@ -21,15 +19,27 @@ def _month_from_request(request):
     except (TypeError, ValueError):
         month, year = today.month, today.year
     month = min(max(month, 1), 12)
+    year = min(max(year, 1), 9998)
     return month, year
+
+
+def _month_bounds(month, year):
+    """First day of the month and first day of the following month."""
+    first_day = date(year, month, 1)
+    if month == 12:
+        return first_day, date(year + 1, 1, 1)
+    return first_day, date(year, month + 1, 1)
 
 
 def _build_month_data(month, year):
     days_in_month = calendar.monthrange(year, month)[1]
     days = list(range(1, days_in_month + 1))
+    first_day, next_month = _month_bounds(month, year)
 
+    # A date range (rather than date__year / date__month) lets the database
+    # use the index on the date column.
     records = Attendance.objects.filter(
-        date__year=year, date__month=month
+        date__gte=first_day, date__lt=next_month
     ).select_related("employee")
 
     by_employee = {}
@@ -40,12 +50,12 @@ def _build_month_data(month, year):
     for employee in Employee.objects.filter(is_active=True):
         marks = by_employee.get(employee.id, {})
         cells = []
-        counts = {"P": 0, "A": 0, "H": 0, "L": 0, "W": 0}
+        counts = {"P": 0, "A": 0}
         reasons = []
         for day in days:
             record = marks.get(day)
             if record:
-                counts[record.status] += 1
+                counts[record.status] = counts.get(record.status, 0) + 1
                 if record.status in Attendance.REASON_REQUIRED and record.reason:
                     reasons.append(f"{day:02d}: {record.reason}")
                 cells.append({"day": day, "code": record.status,
@@ -54,7 +64,7 @@ def _build_month_data(month, year):
             else:
                 cells.append({"day": day, "code": "", "label": "Not marked",
                               "reason": ""})
-        payable = counts["P"] + counts["L"] + counts["H"] * 0.5
+        payable = counts["P"]
         rows.append({
             "employee": employee,
             "cells": cells,
@@ -85,6 +95,11 @@ def monthly_attendance(request):
 
 @login_required
 def monthly_attendance_xlsx(request):
+    # openpyxl is slow to import, so it is only loaded when an Excel file is
+    # actually requested instead of on every cold start.
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Font, PatternFill
+
     month, year = _month_from_request(request)
 
     wb = Workbook()
@@ -100,8 +115,9 @@ def monthly_attendance_xlsx(request):
         cell.font = header_font
         cell.alignment = Alignment(horizontal="center")
 
+    first_day, next_month = _month_bounds(month, year)
     records = (
-        Attendance.objects.filter(date__year=year, date__month=month)
+        Attendance.objects.filter(date__gte=first_day, date__lt=next_month)
         .select_related("employee")
         .order_by("date")
     )
