@@ -86,7 +86,6 @@ def monthly_attendance(request):
 @login_required
 def monthly_attendance_xlsx(request):
     month, year = _month_from_request(request)
-    days, rows = _build_month_data(month, year)
 
     wb = Workbook()
     sheet = wb.active
@@ -95,53 +94,28 @@ def monthly_attendance_xlsx(request):
     header_fill = PatternFill("solid", fgColor="14532D")
     header_font = Font(color="FFFFFF", bold=True)
 
-    header = ["Code", "LR boy", "Role"] + [str(d) for d in days] + [
-        "Coming", "Not coming", "Half day", "On leave", "Week off", "Coming total"
-    ]
-    sheet.append(header)
+    sheet.append(["Date", "Status", "Reason for absent"])
     for cell in sheet[1]:
         cell.fill = header_fill
         cell.font = header_font
         cell.alignment = Alignment(horizontal="center")
 
-    for row in rows:
-        employee = row["employee"]
-        line = [employee.code, employee.name, employee.department]
-        line += [cell["code"] for cell in row["cells"]]
-        line += [
-            row["counts"]["P"], row["counts"]["A"], row["counts"]["H"],
-            row["counts"]["L"], row["counts"]["W"], row["payable"],
-        ]
-        sheet.append(line)
-
-    sheet.freeze_panes = "D2"
-    sheet.column_dimensions["A"].width = 12
-    sheet.column_dimensions["B"].width = 26
-    sheet.column_dimensions["C"].width = 18
-
-    # Second sheet: every non-receipt with the remark that was recorded.
-    reason_sheet = wb.create_sheet("LR remarks")
-    reason_sheet.append(["Date", "Code", "LR boy", "Status", "Remark"])
-    for cell in reason_sheet[1]:
-        cell.fill = header_fill
-        cell.font = header_font
-    absences = (
+    records = (
         Attendance.objects.filter(date__year=year, date__month=month)
-        .exclude(status=Attendance.PRESENT)
-        .exclude(status=Attendance.WEEK_OFF)
         .select_related("employee")
         .order_by("date")
     )
-    for record in absences:
-        reason_sheet.append([
+    for record in records:
+        is_present = record.status == Attendance.PRESENT
+        sheet.append([
             record.date.strftime("%d-%m-%Y"),
-            record.employee.code,
-            record.employee.name,
-            record.get_status_display(),
-            record.reason,
+            "Present" if is_present else "Absent",
+            "" if is_present else record.reason,
         ])
-    reason_sheet.column_dimensions["C"].width = 26
-    reason_sheet.column_dimensions["E"].width = 60
+
+    sheet.column_dimensions["A"].width = 14
+    sheet.column_dimensions["B"].width = 12
+    sheet.column_dimensions["C"].width = 50
 
     stream = BytesIO()
     wb.save(stream)

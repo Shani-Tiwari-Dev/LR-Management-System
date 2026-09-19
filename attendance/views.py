@@ -99,8 +99,10 @@ def employee_list(request):
 
 
 @login_required
-def employee_form(request, pk=None):
-    employee = get_object_or_404(Employee, pk=pk) if pk else None
+def employee_form(request, pk):
+    # There is only ever one LR boy on this system — this view edits the
+    # existing record; it never creates a new one.
+    employee = get_object_or_404(Employee, pk=pk)
     form = EmployeeForm(request.POST or None, instance=employee)
     if request.method == "POST" and form.is_valid():
         saved = form.save()

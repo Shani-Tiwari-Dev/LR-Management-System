@@ -1,40 +1,43 @@
-/* LR Desk — Supabase-inspired dark console.
-   Deep neutral surfaces, hairline borders instead of shadows for hierarchy,
-   one signal color (Supabase green) reserved for primary actions and
-   "on" states, soft-tint badges for status. */
+/* LR Desk — light console with a green signal color.
+   White surfaces, soft grey hairline borders for hierarchy, one green
+   accent reserved for primary actions and "on" states, soft-tint badges
+   for status. */
 
 :root {
-  --bg: #1c1c1c;
-  --bg-inset: #171717;
-  --surface: #1f1f1f;
-  --surface-hover: #262626;
-  --surface-raised: #242424;
-  --border: #2e2e2e;
-  --border-strong: #3d3d3d;
-  --text: #ededed;
-  --text-muted: #a0a0a0;
-  --text-faint: #6e6e6e;
+  --bg: #f6f8f7;
+  --bg-inset: #ffffff;
+  --surface: #ffffff;
+  --surface-hover: #f0f5f2;
+  --surface-raised: #f7faf8;
+  --border: #e3e8e5;
+  --border-strong: #cfd8d3;
+  --text: #16211b;
+  --text-muted: #5b6b62;
+  --text-faint: #8b988f;
 
-  --green: #3ecf8e;
-  --green-dim: #2fb47c;
-  --green-ink: #08150f;
-  --green-bg: rgba(62, 207, 142, 0.12);
-  --green-border: rgba(62, 207, 142, 0.32);
+  --green: #16a34a;
+  --green-bright: #22c55e;
+  --green-dim: #128040;
+  --green-ink: #ffffff;
+  --green-bg: rgba(22, 163, 74, 0.1);
+  --green-border: rgba(22, 163, 74, 0.28);
 
-  --red: #f97066;
-  --red-bg: rgba(249, 112, 102, 0.12);
-  --red-border: rgba(249, 112, 102, 0.3);
+  --red: #dc2626;
+  --red-bg: rgba(220, 38, 38, 0.08);
+  --red-border: rgba(220, 38, 38, 0.24);
 
-  --yellow: #f5b83d;
-  --yellow-bg: rgba(245, 184, 61, 0.12);
-  --yellow-border: rgba(245, 184, 61, 0.3);
+  --yellow: #b45309;
+  --yellow-bg: rgba(217, 145, 22, 0.12);
+  --yellow-border: rgba(217, 145, 22, 0.3);
 
-  --grey-bg: rgba(160, 160, 160, 0.12);
-  --grey-border: rgba(160, 160, 160, 0.28);
+  --grey-bg: rgba(91, 107, 98, 0.09);
+  --grey-border: rgba(91, 107, 98, 0.22);
 
   --radius: 8px;
   --radius-sm: 6px;
   --rail: 232px;
+  --shadow-sm: 0 1px 2px rgba(22, 33, 27, 0.04);
+  --shadow: 0 6px 20px rgba(22, 33, 27, 0.07);
 }
 
 * { box-sizing: border-box; }
@@ -55,7 +58,7 @@ body {
   font-size: 0.94em;
 }
 
-a { color: var(--green); text-decoration: none; }
+a { color: var(--green-dim); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--text); }
@@ -102,7 +105,7 @@ h2 { font-size: 1rem; }
   content: "";
   position: absolute;
   inset: 6px 8px;
-  background: var(--green-ink);
+  background: #fff;
   clip-path: polygon(55% 0%, 0% 60%, 40% 60%, 25% 100%, 100% 35%, 55% 35%);
 }
 .rail-brand .sub { font-size: 0.76rem; color: var(--text-faint); margin-top: 4px; padding-left: 29px; }
@@ -122,7 +125,7 @@ h2 { font-size: 1rem; }
 .rail nav a:hover { background: var(--surface-hover); color: var(--text); }
 .rail nav a.active {
   background: var(--green-bg);
-  color: var(--green);
+  color: var(--green-dim);
 }
 .rail nav .group {
   font-size: 0.7rem;
@@ -164,7 +167,7 @@ h2 { font-size: 1rem; }
 .main { flex: 1; min-width: 0; }
 
 .topbar {
-  background: var(--bg);
+  background: var(--bg-inset);
   border-bottom: 1px solid var(--border);
   padding: 18px 28px;
   display: flex;
@@ -176,10 +179,11 @@ h2 { font-size: 1rem; }
 .topbar .stamp {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.78rem;
-  color: var(--text-faint);
+  color: var(--text-muted);
   padding: 4px 9px;
   border: 1px solid var(--border);
   border-radius: 999px;
+  background: var(--surface-raised);
 }
 
 .content { padding: 24px 28px 56px; max-width: 1400px; }
@@ -191,6 +195,7 @@ h2 { font-size: 1rem; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 18px;
+  box-shadow: var(--shadow-sm);
 }
 .panel-head {
   padding: 13px 16px;
@@ -216,6 +221,7 @@ h2 { font-size: 1rem; }
   padding: 15px 17px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
 }
 .tile .figure {
   font-family: "JetBrains Mono", monospace;
@@ -225,8 +231,11 @@ h2 { font-size: 1rem; }
   color: var(--text);
 }
 .tile .caption { color: var(--text-muted); font-size: 0.82rem; margin-top: 4px; }
-.tile.good .figure { color: var(--green); }
+.tile.good { border-color: var(--green-border); }
+.tile.good .figure { color: var(--green-dim); }
+.tile.warn { border-color: var(--yellow-border); }
 .tile.warn .figure { color: var(--yellow); }
+.tile.bad { border-color: var(--red-border); }
 .tile.bad .figure { color: var(--red); }
 
 /* -------------------------------------------------------------- forms */
@@ -246,7 +255,7 @@ select, textarea {
   padding: 8px 11px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  background: var(--bg-inset);
+  background: #fff;
   font: inherit;
   color: var(--text);
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
@@ -298,26 +307,26 @@ input[type="file"] { font: inherit; color: var(--text-muted); }
 .btn:hover { background: var(--green-dim); border-color: var(--green-dim); text-decoration: none; }
 .btn:active { transform: translateY(1px); }
 .btn.secondary {
-  background: transparent;
+  background: #fff;
   color: var(--text);
   border-color: var(--border-strong);
 }
 .btn.secondary:hover { background: var(--surface-hover); border-color: var(--border-strong); }
-.btn.wa { background: #25d366; border-color: #25d366; color: #08150f; }
+.btn.wa { background: #25d366; border-color: #25d366; color: #063d20; }
 .btn.wa:hover { background: #1fb958; border-color: #1fb958; }
 .btn.small { padding: 5px 10px; font-size: 0.8rem; }
-.btn.danger { background: var(--red); border-color: var(--red); color: #240a08; }
+.btn.danger { background: var(--red); border-color: var(--red); color: #fff; }
 
 /* ------------------------------------------------------------- tables */
 
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
 thead th {
-  background: var(--bg-inset);
+  background: var(--surface-raised);
   text-align: left;
   padding: 9px 12px;
   border-bottom: 1px solid var(--border);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -334,7 +343,7 @@ tfoot td { padding: 9px 12px; font-weight: 600; border-top: 1px solid var(--bord
   font-weight: 600;
   border: 1px solid transparent;
 }
-.pill.p { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.pill.p { background: var(--green-bg); color: var(--green-dim); border-color: var(--green-border); }
 .pill.a { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
 .pill.h, .pill.l { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
 .pill.w { background: var(--grey-bg); color: var(--text-muted); border-color: var(--grey-border); }
@@ -343,7 +352,7 @@ tfoot td { padding: 9px 12px; font-weight: 600; border-top: 1px solid var(--bord
    yellow, solved (closed) = green. */
 .pill.open { background: var(--grey-bg); color: var(--text-muted); border-color: var(--grey-border); }
 .pill.followed { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
-.pill.closed { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.pill.closed { background: var(--green-bg); color: var(--green-dim); border-color: var(--green-border); }
 
 /* ------------------------------------------------- LR coming marking */
 
@@ -357,14 +366,14 @@ tfoot td { padding: 9px 12px; font-weight: 600; border-top: 1px solid var(--bord
   border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.82rem;
-  background: var(--bg-inset);
+  background: #fff;
   color: var(--text-muted);
   transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
 .status-set input:checked + label {
   background: var(--green);
   border-color: var(--green);
-  color: var(--green-ink);
+  color: #fff;
 }
 .status-set input:focus-visible + label { outline: 2px solid var(--green); outline-offset: 1px; }
 .reason-cell input { min-width: 220px; }
@@ -372,7 +381,7 @@ tfoot td { padding: 9px 12px; font-weight: 600; border-top: 1px solid var(--bord
 
 .grid-report td, .grid-report th { padding: 5px 6px; text-align: center; font-size: 0.78rem; }
 .grid-report td.name { text-align: left; white-space: nowrap; font-size: 0.85rem; color: var(--text); }
-.grid-report .mark-P { color: var(--green); font-weight: 600; }
+.grid-report .mark-P { color: var(--green-dim); font-weight: 600; }
 .grid-report .mark-A { color: var(--red); font-weight: 600; background: var(--red-bg); }
 .grid-report .mark-H, .grid-report .mark-L { color: var(--yellow); font-weight: 600; }
 .grid-report .mark-W { color: var(--text-faint); }
@@ -387,7 +396,7 @@ tfoot td { padding: 9px 12px; font-weight: 600; border-top: 1px solid var(--bord
   margin-bottom: 14px;
   font-size: 0.88rem;
 }
-.notice.success { border-color: var(--green-border); background: var(--green-bg); color: var(--green); }
+.notice.success { border-color: var(--green-border); background: var(--green-bg); color: var(--green-dim); }
 .notice.error { border-color: var(--red-border); background: var(--red-bg); color: var(--red); }
 .notice.info { border-color: var(--yellow-border); background: var(--yellow-bg); color: var(--yellow); }
 
@@ -430,7 +439,7 @@ details.adder[open] summary { border-bottom: 1px solid var(--border); }
   background: var(--bg);
 }
 .login-aside {
-  background: var(--bg-inset);
+  background: var(--surface-raised);
   color: var(--text-muted);
   padding: 56px 52px;
   display: flex;
@@ -449,7 +458,7 @@ details.adder[open] summary { border-bottom: 1px solid var(--border); }
   color: var(--text-faint);
   line-height: 2;
 }
-.login-aside .docket b { color: var(--green); font-weight: 500; }
+.login-aside .docket b { color: var(--green-dim); font-weight: 500; }
 .login-aside h1 {
   font-size: 2.2rem;
   color: var(--text);
@@ -459,7 +468,7 @@ details.adder[open] summary { border-bottom: 1px solid var(--border); }
 }
 .login-aside p { color: var(--text-muted); max-width: 44ch; }
 .login-form-side {
-  background: var(--bg);
+  background: var(--bg-inset);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -498,7 +507,7 @@ details.adder[open] summary { border-bottom: 1px solid var(--border); }
 @media print {
   .rail, .topbar, .actions, .no-print { display: none !important; }
   body { background: #fff; color: #000; }
-  .panel { border: 1px solid #ccc; }
+  .panel { border: 1px solid #ccc; box-shadow: none; }
   .content { padding: 0; }
 }
 
