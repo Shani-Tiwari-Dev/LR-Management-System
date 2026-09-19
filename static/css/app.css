@@ -47,8 +47,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
-  font-size: 13.5px;
-  line-height: 1.55;
+  font-size: 14.5px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -61,9 +61,9 @@ body {
 a { color: var(--green-dim); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--text); }
-h1 { font-size: 1.3rem; }
-h2 { font-size: 1rem; }
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; margin: 0; color: var(--text); }
+h1 { font-size: 1.5rem; font-weight: 700; }
+h2 { font-size: 1.02rem; }
 
 ::selection { background: var(--green-bg); color: var(--text); }
 
@@ -173,7 +173,7 @@ h2 { font-size: 1rem; }
 .topbar {
   background: var(--bg-inset);
   border-bottom: 1px solid var(--border);
-  padding: 18px 28px;
+  padding: 22px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -184,13 +184,13 @@ h2 { font-size: 1rem; }
   font-family: "JetBrains Mono", monospace;
   font-size: 0.78rem;
   color: var(--text-muted);
-  padding: 4px 9px;
+  padding: 5px 11px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface-raised);
 }
 
-.content { padding: 24px 28px 56px; max-width: 1400px; }
+.content { padding: 28px 32px 60px; max-width: 1400px; }
 
 /* ------------------------------------------------------------- panels */
 
@@ -198,11 +198,11 @@ h2 { font-size: 1rem; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  margin-bottom: 18px;
+  margin-bottom: 22px;
   box-shadow: var(--shadow-sm);
 }
 .panel-head {
-  padding: 13px 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -210,33 +210,48 @@ h2 { font-size: 1rem; }
   gap: 12px;
   flex-wrap: wrap;
 }
-.panel-head p { margin: 2px 0 0; color: var(--text-muted); font-size: 0.85rem; }
-.panel-body { padding: 16px; }
+.panel-head p { margin: 3px 0 0; color: var(--text-muted); font-size: 0.85rem; }
+.panel-body { padding: 20px; }
 .panel-body.tight { padding: 0; }
 
 .tiles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 12px;
-  margin-bottom: 18px;
+  gap: 14px;
+  margin-bottom: 22px;
 }
 .tile {
   background: var(--surface);
-  padding: 15px 17px;
+  padding: 16px 18px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 .tile:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.tile-top { margin-bottom: 10px; }
+.tile-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.tile.good .tile-icon { background: var(--green-bg); color: var(--green-dim); border-color: var(--green-border); }
+.tile.bad .tile-icon { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.tile.warn .tile-icon { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
 .tile .figure {
   font-family: "JetBrains Mono", monospace;
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   font-weight: 600;
   line-height: 1.15;
   color: var(--text);
 }
-.tile .caption { color: var(--text-muted); font-size: 0.82rem; margin-top: 4px; }
+.tile .caption { color: var(--text-muted); font-size: 0.82rem; margin-top: 5px; }
 .tile.good { border-color: var(--green-border); }
 .tile.good .figure { color: var(--green-dim); }
 .tile.warn { border-color: var(--yellow-border); }
@@ -244,7 +259,70 @@ h2 { font-size: 1rem; }
 .tile.bad { border-color: var(--red-border); }
 .tile.bad .figure { color: var(--red); }
 
-/* -------------------------------------------------------------- forms */
+/* --------------------------------------------------- quick action grid */
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.quick-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.12s ease, background 0.12s ease, transform 0.12s ease;
+}
+.quick-card:hover {
+  border-color: var(--green-border);
+  background: var(--green-bg);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.quick-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--green-dim);
+  flex: none;
+}
+.quick-title { font-weight: 600; font-size: 0.9rem; }
+.quick-desc { color: var(--text-muted); font-size: 0.8rem; margin-top: 2px; }
+
+/* --------------------------------------------------- quick status pick */
+
+.status-quick { margin: 0; }
+.status-select {
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 26px 4px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6b62' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+.status-select:focus { outline: none; box-shadow: 0 0 0 3px var(--green-bg); }
+.status-select.open { background-color: var(--grey-bg); color: var(--text-muted); border-color: var(--grey-border); }
+.status-select.followed { background-color: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+.status-select.closed { background-color: var(--green-bg); color: var(--green-dim); border-color: var(--green-border); }
+
+
 
 .field { margin-bottom: 14px; }
 .field label, .form-grid label {

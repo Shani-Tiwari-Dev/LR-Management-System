@@ -7,6 +7,7 @@ urlpatterns = [
     path("add/", views.add_inquiry, name="add_inquiry"),
     path("<int:pk>/edit/", views.edit_inquiry, name="edit_inquiry"),
     path("<int:pk>/delete/", views.delete_inquiry, name="delete_inquiry"),
+    path("<int:pk>/status/", views.update_status, name="update_inquiry_status"),
     path("contacts/", views.contact_book, name="contact_book"),
     path("contacts/lookup/", views.contact_lookup, name="contact_lookup"),
 ]

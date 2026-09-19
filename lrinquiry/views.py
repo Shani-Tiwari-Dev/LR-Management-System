@@ -148,6 +148,26 @@ def edit_inquiry(request, pk):
 
 
 @login_required
+def update_status(request, pk):
+    """Quick status change from the board or dashboard card — no need to
+    open the edit page just to flip Unsolved / LR coming / Solved."""
+    inquiry = get_object_or_404(Inquiry, pk=pk)
+    if request.method == "POST":
+        status = request.POST.get("status")
+        if status in dict(Inquiry.STATUS_CHOICES):
+            inquiry.status = status
+            inquiry.save(update_fields=["status"])
+            messages.success(
+                request,
+                f"{inquiry.bill_reference or inquiry.party_name} marked {inquiry.get_status_display()}.",
+            )
+        else:
+            messages.error(request, "That isn't a valid status.")
+    referer = request.META.get("HTTP_REFERER")
+    return redirect(referer or "inquiry_dashboard")
+
+
+@login_required
 def delete_inquiry(request, pk):
     inquiry = get_object_or_404(Inquiry, pk=pk)
     if request.method == "POST":

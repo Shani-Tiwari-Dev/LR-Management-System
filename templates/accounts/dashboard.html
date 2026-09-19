@@ -2,13 +2,30 @@
 {% block title %}Dashboard · LR Desk{% endblock %}
 {% block heading %}Today at a glance{% endblock %}
 
+{% block subheading %}<p style="margin:4px 0 0;color:var(--text-muted);font-size:0.86rem">Here's where things stand for {{ today|date:"d M Y" }}.</p>{% endblock %}
+
 {% block content %}
 <div class="tiles">
-  <div class="tile"><div class="figure">{{ employee_count }}</div><div class="caption">LR boy active</div></div>
-  <div class="tile good"><div class="figure">{{ present_today }}</div><div class="caption">LR coming today</div></div>
-  <div class="tile bad"><div class="figure">{{ absent_today }}</div><div class="caption">LR not coming today</div></div>
-  <div class="tile"><div class="figure">{{ inquiries_today }}</div><div class="caption">Inquiries logged today</div></div>
-  <div class="tile warn"><div class="figure">{{ open_inquiries }}</div><div class="caption">Inquiries still unsolved</div></div>
+  <div class="tile">
+    <div class="tile-top"><span class="tile-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div>
+    <div class="figure">{{ employee_count }}</div><div class="caption">LR boy active</div>
+  </div>
+  <div class="tile good">
+    <div class="tile-top"><span class="tile-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span></div>
+    <div class="figure">{{ present_today }}</div><div class="caption">LR coming today</div>
+  </div>
+  <div class="tile bad">
+    <div class="tile-top"><span class="tile-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span></div>
+    <div class="figure">{{ absent_today }}</div><div class="caption">LR not coming today</div>
+  </div>
+  <div class="tile">
+    <div class="tile-top"><span class="tile-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span></div>
+    <div class="figure">{{ inquiries_today }}</div><div class="caption">Inquiries logged today</div>
+  </div>
+  <div class="tile warn">
+    <div class="tile-top"><span class="tile-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span></div>
+    <div class="figure">{{ open_inquiries }}</div><div class="caption">Inquiries still unsolved</div>
+  </div>
 </div>
 
 {% if not marked_today %}
@@ -37,9 +54,22 @@
             <td>{{ inquiry.transport_name }}</td>
             <td class="mono">{{ inquiry.bill_reference }}</td>
             <td class="mono">{{ inquiry.lr_no|default:"pending" }}</td>
-            <td>{{ inquiry.contact.name }}<br><span class="mono" style="color:var(--muted)">{{ inquiry.contact.phone }}</span></td>
-            <td><span class="pill {{ inquiry.status|lower }}">{{ inquiry.get_status_display }}</span></td>
-            <td><a class="btn wa small" target="_blank" rel="noopener" href="{{ inquiry.whatsapp_url }}">WhatsApp</a></td>
+            <td>{{ inquiry.contact.name }}<br><span class="mono" style="color:var(--text-faint)">{{ inquiry.contact.phone }}</span></td>
+            <td>
+              <form method="post" action="{% url 'update_inquiry_status' inquiry.pk %}" class="status-quick">
+                {% csrf_token %}
+                <select name="status" class="status-select {{ inquiry.status|lower }}" onchange="this.form.submit()">
+                  {% for value, label in inquiry.STATUS_CHOICES %}
+                    <option value="{{ value }}" {% if value == inquiry.status %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+            </td>
+            <td>
+              <a class="btn wa icon-only" target="_blank" rel="noopener" href="{{ inquiry.whatsapp_url }}" title="Message {{ inquiry.contact.name }} on WhatsApp" aria-label="Message on WhatsApp">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.48-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.53.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.6-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.87 1.21 3.07.15.2 2.09 3.2 5.08 4.48.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.24-.7.24-1.29.17-1.42-.07-.12-.27-.2-.57-.35z"/><path d="M12.04 2C6.58 2 2.13 6.42 2.13 11.86c0 1.87.51 3.63 1.4 5.15L2 22l5.14-1.5a9.98 9.98 0 0 0 4.9 1.28h.01c5.46 0 9.91-4.42 9.91-9.86C21.96 6.48 17.5 2 12.04 2zm0 18.02h-.01a8.2 8.2 0 0 1-4.17-1.14l-.3-.18-3.05.89.89-2.96-.2-.31a8.14 8.14 0 0 1-1.26-4.36c0-4.5 3.68-8.16 8.2-8.16 2.19 0 4.24.85 5.79 2.4a8.1 8.1 0 0 1 2.4 5.77c0 4.5-3.68 8.15-8.29 8.15z"/></svg>
+              </a>
+            </td>
           </tr>
         {% empty %}
           <tr><td colspan="8" class="empty">No inquiries yet. Add the first one from the inquiry board.</td></tr>
@@ -51,13 +81,25 @@
 </div>
 
 <div class="panel">
-  <div class="panel-head"><div><h2>Where to go next</h2></div></div>
+  <div class="panel-head"><div><h2>Where to go next</h2><p>Jump straight into today's work.</p></div></div>
   <div class="panel-body">
-    <div class="actions">
-      <a class="btn" href="{% url 'mark_attendance' %}">Mark LR coming</a>
-      <a class="btn secondary" href="{% url 'inquiry_dashboard' %}">Add an LR inquiry</a>
-      <a class="btn secondary" href="{% url 'monthly_attendance' %}">Monthly LR coming report</a>
-      <a class="btn secondary" href="{% url 'report_builder' %}">Clean a billing file</a>
+    <div class="quick-grid">
+      <a class="quick-card" href="{% url 'mark_attendance' %}">
+        <span class="quick-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+        <div><div class="quick-title">Mark LR coming</div><div class="quick-desc">Today's sheet for the LR boy</div></div>
+      </a>
+      <a class="quick-card" href="{% url 'inquiry_dashboard' %}">
+        <span class="quick-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        <div><div class="quick-title">Add an LR inquiry</div><div class="quick-desc">Log a new bill or follow-up</div></div>
+      </a>
+      <a class="quick-card" href="{% url 'monthly_attendance' %}">
+        <span class="quick-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></span>
+        <div><div class="quick-title">Monthly LR coming report</div><div class="quick-desc">Download or review the month</div></div>
+      </a>
+      <a class="quick-card" href="{% url 'report_builder' %}">
+        <span class="quick-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+        <div><div class="quick-title">Clean a billing file</div><div class="quick-desc">Tidy a spreadsheet for export</div></div>
+      </a>
     </div>
   </div>
 </div>
